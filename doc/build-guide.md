@@ -101,10 +101,10 @@ OpenUniverse.AppDir/
 Once your `OpenUniverse.AppDir` is prepared, package it:
 
 ```bash
-ARCH=x86_64 ./appimagetool-x86_64.AppImage OpenUniverse.AppDir ou-x86_64
+ARCH=x86_64 ./appimagetool-x86_64.AppImage OpenUniverse.AppDir ou-linux-x86_64
 ```
 
-This will create `ou-x86_64` AppImage executable.
+This will create `ou-linux-x86_64` AppImage executable.
 
 ### Generate a GPG Key in Batch Mode
 
@@ -132,8 +132,8 @@ Look for the fingerprint (40-character hex) and copy it for use in the next step
 
 Sign the AppImage using the generated GPG key:
 
-```bashu
-ARCH=x86_64 ./appimagetool-x86_64.AppImage OpenUniverse.AppDir --sign --sign-key YOUR_40_CHARACTER_HEX_FINGERPRINT
+```bash
+ARCH=x86_64 ./appimagetool-x86_64.AppImage ou-linux-x86_64 --sign --sign-key YOUR_40_CHARACTER_HEX_FINGERPRINT
 ```
 
 > Replace the key fingerprint with your actual key's fingerprint.
@@ -143,7 +143,7 @@ ARCH=x86_64 ./appimagetool-x86_64.AppImage OpenUniverse.AppDir --sign --sign-key
 Inspect the embedded GPG signature:
 
 ```bash
-./OpenUniverse-x86_64.AppImage --appimage-signature
+./ou-linux-x86_64 --appimage-signature
 ```
 
 ### Validate the Signature
@@ -158,7 +158,7 @@ chmod +x validate-x86_64.AppImage
 Then validate:
 
 ```bash
-./validate-x86_64.AppImage ./OpenUniverse-x86_64.AppImage
+./validate-x86_64.AppImage ou-linux-x86_64
 ```
 
 A successful validation confirms the AppImage was signed by a trusted key and hasn't been modified.

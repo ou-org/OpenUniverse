@@ -90,9 +90,7 @@ intelligently.
 
 ### 1. Download OpenUniverse binary
 
-```sh
-wget -P ~/Downloads https://example.com/ou
-```
+[https://github.com/ou-org/OpenUniverse/releases/download/v1.0.21/ou-linux-x86_64](https://github.com/ou-org/OpenUniverse/releases/download/v1.0.21/ou-linux-x86_64)
 
 ### 2. Download "Hello, Universe!" example
 

@@ -53,7 +53,7 @@ public class Main {
      *     <Implementation-Vendor>OpenUnvierse project</Implementation-Vendor>
      * </manifestEntries>	    
      */
-    public static final String REPO_URL = "https://";
+    public static final String REPO_URL = "https://github.com/ou-org/OpenUniverse.git";
     /**
      * Constant <code>MANIFEST_IMPLEMENTATION_TITLE</code> See pom.xml
      */

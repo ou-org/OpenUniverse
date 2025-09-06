@@ -5,7 +5,7 @@ All formats support the same command-line interface.
 
 | Format                             | File                     | Platform          | Requirements   | Notes                                                                   |
 | ---------------------------------- | ------------------------ | ----------------- | -------------- | ----------------------------------------------------------------------- |
-| **Linux x86\_64**                  | `ou-x86_64`              | Linux (64-bit)    | None           | Best default choice, works out-of-the-box on most modern Linux systems. |
+| **Linux x86\_64**                  | `ou-linux-x86_64`        | Linux (64-bit)    | None           | Best default choice, works out-of-the-box on most modern Linux systems. |
 | **Linux arch-agnostic executable** | `ou`                     | Linux (any arch)  | Java installed | Runs via system Java.                               |
 | **Executable JAR**                 | `ou.jar`                 | Cross-platform    | Java installed | Portable, can be run on Linux, macOS, Windows.                          |
 | **Java Library**                   | `ou.jar` (as dependency) | Java environments | Java installed | Can be invoked programmatically from your own Java projects.            |
@@ -22,7 +22,7 @@ Make the file executable if necessary:
 
 ```bash
 chmod +x ou-x86_64
-./ou-x86_64 '/path/to/your/repo' start --stdout
+./ou-linux-x86_64 '/path/to/your/repo' start --stdout
 ```
 
 This format includes all dependencies and does not require Java to be installed separately.
