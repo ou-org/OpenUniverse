@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=OpenUniverse
+Comment=OpenUnvierse Platform
+Exec=AppRun
+Icon=glucose_8205747
+Type=Application
+Categories=Utility;
+Terminal=true
