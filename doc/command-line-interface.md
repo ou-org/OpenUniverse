@@ -3,6 +3,7 @@
 ## Usage
 
 ```text
+$ ou help
 
 Usage:
 
