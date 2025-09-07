@@ -112,6 +112,9 @@ public class MdUtils {
             Matcher fnMatch = fileLinePattern.matcher(line);
             if (!insideCodeBlock && fnMatch.matches()) {
                 currentFileName = fnMatch.group(1).trim();
+                if (currentFileName.startsWith("/")) {
+                    currentFileName = currentFileName.substring(1);
+                }
                 currentExe = fnMatch.group(2) != null; // true if `+x` present
                 continue;
             }
