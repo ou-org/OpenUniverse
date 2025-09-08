@@ -88,23 +88,23 @@ intelligently.
 
 ## Getting Started
 
-#### 1. Download OpenUniverse binary
+#### 1. Download OpenUniverse binary:
 
 [https://github.com/ou-org/OpenUniverse/releases/download/v1.0.21/ou-linux-x86_64](https://github.com/ou-org/OpenUniverse/releases/download/v1.0.21/ou-linux-x86_64)
 
-#### 2. Download "Hello, Universe!" example
+#### 2. Download "Hello, Universe!" example:
 
 Download and extract archive with ready to use sample repository:
 
 [https://github.com/ou-org/OpenUniverse/releases/download/v1.0.21/HelloUniverse.zip](https://github.com/ou-org/OpenUniverse/releases/download/v1.0.21/HelloUniverse.zip)
 
-#### 3. Strart OpenUniverse
+#### 3. Strart Your Universe:
 
 ```sh
 ou /path/to/your/folder/HelloUniverseRepo start --stdout --assume-yes
 ```
 
-#### 4. Listen Your Universe!
+#### 4. Hear the Universe!
 
 Open your browser and go to:
 
