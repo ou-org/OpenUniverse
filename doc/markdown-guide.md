@@ -11,7 +11,7 @@ Metadata is declared in the Markdown header using HTML meta tags:
 
 ```html
 <head>
-    <!-- Required for OpenUniverse to recognize the document -->
+    <!-- Required for OpenUniverse to process the document -->
     <meta name='doc-spec' content="OpenUniverseSpecVer-1.01">
     
     <!-- Optional: if true, the document will be ignored during scanning phase -->
@@ -32,11 +32,14 @@ Metadata is declared in the Markdown header using HTML meta tags:
 
 Files to be extracted are specified with a file name immediately preceding a code block:
 
-```
-`file.ext` [`+x`]
-```language
+```text
 
-...code...
+`file.py` `+x`
+
+```bash
+#!/bin/bash
+echo "Executable script"
+...
 
 ```
 
@@ -61,34 +64,8 @@ Supported `bytes:*` encodings:
 * `bytes:base64` → Base64
 * `bytes:base64url` → Base64 URL-encoded
 
-## Binary Extraction (`bytes:*`)
+Whitespace characters are allowed.
 
-Examples:
-
-`secret.bin`
-```bytes:base64
-SGVsbG8gQmluYXJ5IQ==
-```
-
-`file.hex`
-```bytes:hex
-48 65 6c 6c 6f
-```
-
-`file.bin`
-```bytes:bin
-01001000 01101001
-```
-
-`file.oct`
-```bytes:oct
-110 145 154
-```
-
-`file.dec`
-```bytes:dec
-072 101 108
-```
 
 ## Executable Files (`+x`)
 
@@ -120,22 +97,6 @@ echo "Executable script"
 
 ## Examples
 
-### Python Script
-
-```
-hello.py +x
-```python
-#!/usr/bin/env python3
-print("Hello from Python!")
-```
-
-### Binary File (Base64)
-
-`secret.bin`
-```bytes:base64
-SGVsbG8gQmluYXJ5IQ==
-```
-
 ### JSON File
 
 `task.json`
@@ -146,11 +107,40 @@ SGVsbG8gQmluYXJ5IQ==
 }
 ```
 
-### Hexadecimal File
+### Python Script
 
-`file.hex`
+```
+hello.py +x
+```python
+#!/usr/bin/env python3
+print("Hello from Python!")
+```
+
+### Binary Files
+
+`mysecret.bin`
+```bytes:base64
+SGVsbG8gQmluYXJ5IQ==
+```
+
+`myfile.hex`
 ```bytes:hex
-48656c6c6f20576f726c6421
+48 65 6c 6c 6f
+```
+
+`myfile.bin`
+```bytes:bin
+01001000 01101001
+```
+
+`myfile.oct`
+```bytes:oct
+110 145 154
+```
+
+`myfile.dec`
+```bytes:dec
+072 101 108
 ```
 
 ## Best Practices

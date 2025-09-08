@@ -85,6 +85,8 @@ while True:
     time.sleep(CHECK_INTERVAL)
 ```
 
+---
+
 ## Event Processor Plugin
 
 ### Role
@@ -155,6 +157,8 @@ for line in sys.stdin:
     print(json.dumps(result), flush=True)
 ```
 
+---
+
 ## Pre-Run Validator Plugin
 
 ### Role
@@ -213,6 +217,8 @@ except Exception as e:
 
 ```
 
+---
+
 ## Secret Extractor Plugin
 
 ### Role
@@ -245,6 +251,8 @@ while True:
 
     print(original, flush=True)
 ```
+
+---
 
 ## Export Target Plugin
 
@@ -281,6 +289,8 @@ for line in sys.stdin:
         print(str(e).replace("\n", " "), flush=True) # error
 ```
 
+---
+
 ## Dead Message Queue (<abbr title="Dead Message Queue">DMQ</abbr>) Plugin
 
 ### Role
@@ -316,3 +326,5 @@ for line in sys.stdin:
         print(str(e), file=sys.stderr, flush=True) # error
 
 ```
+
+---

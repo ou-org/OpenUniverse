@@ -88,33 +88,31 @@ intelligently.
 
 ## Getting Started
 
-### 1. Download OpenUniverse binary
+#### 1. Download OpenUniverse binary
 
 [https://github.com/ou-org/OpenUniverse/releases/download/v1.0.21/ou-linux-x86_64](https://github.com/ou-org/OpenUniverse/releases/download/v1.0.21/ou-linux-x86_64)
 
-### 2. Download "Hello, Universe!" example
+#### 2. Download "Hello, Universe!" example
 
-Download archive with ready to use sample repository:
+Download and extract archive with ready to use sample repository:
 
-```sh
-mkdir -p /path/to/your/folder
-curl -L "https://example.com/HelloUniverse.tar.gz" | tar -xzf - -C /path/to/your/folder
-```
+[https://github.com/ou-org/OpenUniverse/releases/download/v1.0.21/HelloUniverse.zip](https://github.com/ou-org/OpenUniverse/releases/download/v1.0.21/HelloUniverse.zip)
 
-### 3. Strart OpenUniverse
+#### 3. Strart OpenUniverse
 
 ```sh
-ou /path/to/your/folder start --stdout --assume-yes
+ou /path/to/your/folder/HelloUniverseRepo start --stdout --assume-yes
 ```
 
-### 4. Listen Your Universe!
+#### 4. Listen Your Universe!
 
-Just point your browser to
+Open your browser and go to:
+
 [http://localhost:8080/events](http://localhost:8080/events)
 
 > [!NOTE]
 > Read more about HelloUniverse example
-> [here](https://example.com/HelloUniverse.md).
+> [here](https://github.com/ou-org/OpenUniverse/blob/master/doc/examples/HelloUniverse.md).
 
 ## Documentation
 
@@ -122,7 +120,6 @@ Just point your browser to
 - [Ontology Overview](doc/ontology.md)
 - [Query Syntax](doc/query-syntax.md)
 - [Abstract Document Structure](doc/abstract-documents-structure.md)
-- [Root Document Structure (work in progress...)](doc/root-documents-structure.md)
 - [Syntax for Placeholder Injection](doc/placeholder-injection.md)
 - [Java Requirement](doc/java-requirement.md)
 - [Java Search Order](doc/java-search-order.md)
@@ -132,14 +129,13 @@ Just point your browser to
 
 ## Tutorials
 
-- [Hello Universe: First Steps with OpenUniverse](doc/examples/hello-universe.md)
 - [Signing Output Records](doc/signing-guide.md)
-- [Check File Size: Triggered Validation Example](doc/triggered-validation.md)
 - [Send data to Apache Solr](doc/solr-exporter.md)
 
-## Document Examples
+## Examples
 
-- [CheckFile](doc/examples/CheckFile.json)
+- [Hello, Universe!](doc/examples/HelloUniverse.md)
+- [Check File Size](doc/examples/CheckFileSize.md)
 - [Document Validator](doc/examples/document-validator.json)
 - [Hello Solr](doc/examples/hello-solr.json)
 - [Hello SSE (JSON)](doc/examples/hello-sse.json)
@@ -164,6 +160,7 @@ Just point your browser to
 ## Useful Guides
 
 - [Minimal Git Repository Guide](doc/git-repo.md)
+- [Apache Solr Guide](doc/solr-guide.md)
 - [Working with Encrypted Values](doc/work-with-encrypted-values.md)
 
 ## Related Works

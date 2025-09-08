@@ -15,7 +15,7 @@ cd /path/to/your/repo
 git init
 ```
 
-**3. Configure your Git username and email (if not set)**
+**3. Configure your Git username and email**
 
 ```bash
 git config user.name "Your Name"

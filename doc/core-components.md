@@ -10,14 +10,20 @@
   between jobs, events, and systems are discovered dynamically at runtime, creating adaptive orchestration
   flows.
   <br><br>
-<h3 style="">Documents:</h3><br>
+<h3>Documents:</h3>
 <div class="flowchart">
+  
+  ---
+  
   <div class="boxed">
     <b>AbstractDocument</b> (Abstract)
     <br><br>
     ┌ <b>Header (HeaderObject)</b><br>
     └ <b>Properties (Map)</b>
-  </div><br><br>  
+  </div><br>
+
+  ---
+  
   <div class="boxed">
     <b>RootDocument</b><br>
     extends <b>AbstractDocument</b>
@@ -31,7 +37,10 @@
     ├ UnprotectPlugin (PluginObject)<br>
     ├ ExportTargets (List&lt;ExportTargetObject&gt;)<br>
     └ <abbr title="Dead Message Queue">DMQ</abbr>Plugin (PluginObject)
-  </div><br><br>  
+  </div><br>
+  
+  ---
+  
   <div class="boxed">
     <b>EventDocument</b><br>
     extends <b>AbstractDocument</b>
@@ -39,7 +48,10 @@
     ┌ <b>Header (HeaderObject)</b><br>
     ├ <b>Properties (Map)</b><br>
     └ Processable (Boolean)
-  </div><br><br>  
+  </div><br>
+  
+  ---
+  
   <div class="boxed">
     <b>Triggers/CalendarDocument</b><br>
     extends <b>AbstractDocument</b>
@@ -47,7 +59,10 @@
     ┌ <b>Header (HeaderObject)</b><br>
     ├ <b>Properties (Map)</b><br>
     └ Calendars (List&lt;CalendarObject&gt;)
-  </div><br><br>  
+  </div><br>
+
+  ---
+  
   <div class="boxed">
     <b>Triggers/SchedulerDocument</b><br>
     extends <b>AbstractDocument</b>
@@ -55,7 +70,10 @@
     ┌ <b>Header (HeaderObject)</b><br>
     ├ <b>Properties (Map)</b><br>
     └ Schedulers (List&lt;SchedulerObject&gt;)
-  </div><br><br>  
+  </div><br>
+
+  ---
+  
   <div class="boxed">
     <b>Triggers/EventPublisherDocument</b><br>
     extends <b>AbstractDocument</b>
@@ -63,7 +81,10 @@
     ┌ <b>Header (HeaderObject)</b><br>
     ├ <b>Properties (Map)</b><br>
     └ EventPublisherPlugin (PluginObject)
-  </div><br><br>  
+  </div><br>
+
+  ---
+  
   <div class="boxed">
     <b>JobDocument</b><br>
     extends <b>AbstractDocument</b>
@@ -72,7 +93,10 @@
     ├ <b>Properties (Map)</b><br>
     ├ Systems (List&lt;SystemDocument&gt;)<br>
     └ EventProcessors (List&lt;ProcessorDocument&gt;)
-  </div><br><br>  
+  </div><br>
+
+  ---
+  
   <div class="boxed">
     <b>SystemDocument</b><br>
     extends <b>AbstractDocument</b>
@@ -80,7 +104,10 @@
     ┌ <b>Header (HeaderObject)</b><br>
     ├ <b>Properties (Map)</b><br>
     └ AbstractSystemDefinition (Object)
-  </div><br><br>  
+  </div><br>
+
+  ---
+  
   <div class="boxed">
     <b>EventProcessorDocument</b><br>
     extends <b>AbstractDocument</b>
@@ -89,9 +116,15 @@
     ├ <b>Properties (Map)</b><br>
     └ EventProcessorPlugin (PluginObject)
   </div>
+
+  ---
+  
 </div>
 <br><br>
-<h3>Objects:</h3><br>
+<h3>Objects:</h3>
+
+  ---
+  
 <div class="flowchart">
   <div class="boxed">
     <b>HeaderObject</b>
@@ -104,7 +137,10 @@
     ├ Tags (List)<br>
     ├ Attributes (Map)<br>
     └ PreRunConstraints (List&lt;PluginObject&gt;)
-  </div><br><br>  
+  </div><br>
+
+  ---
+  
   <div class="boxed">
     <b>PluginObject</b>
     <br><br>
@@ -114,21 +150,30 @@
     ├ WorkingDirectory (String)<br>
     ├ ErrorLogFile (String)<br>
     └ InstancesCount (Integer)
-   </div><br><br>  
+   </div><br>
+
+  ---
+  
   <div class="boxed">
     <b>CalendarObject</b>
     <br><br>
     ┌ EventType (String)<br>
     ├ ScheduledFor (Time)<br>
     └ user-defined fields...
-   </div><br><br>  
+   </div><br>
+
+  ---
+  
   <div class="boxed">
     <b>SchedulerObject</b>
     <br><br>
     ┌ EventType (String)<br>
     ├ CronExpression (String)<br>
     └ user-defined fields...
-   </div><br><br>  
+   </div><br>
+
+  ---
+  
   <div class="boxed">
     <b>SignSettingsObject</b>
     <br><br>
@@ -138,7 +183,10 @@
     ├ KeyAlias (String)<br>
     ├ KeyPassword (String)<br>
     └ SignatureAlgorithm (String)
-   </div><br><br>  
+   </div><br>
+
+  ---
+  
   <div class="boxed">
     <b>ExportTargetObject</b>
     <br><br>
@@ -150,7 +198,10 @@
   </div>
 </div>
 <br><br>
-<h3>Plugins:</h3><br>
+<h3>Plugins:</h3>
+
+  ---
+  
 <div class="flowchart">
   <div class="boxed">
     <b>Event Publisher Plugin</b>
@@ -161,7 +212,10 @@
     <ul>
       <li>Triggers/EventPublisherDocument</li>
     </ul>
-   </div><br><br>  
+   </div><br>
+
+  ---
+  
   <div class="boxed">
     <b>Event Processor Plugin</b>
     <br><br>
@@ -171,7 +225,10 @@
     <ul>
       <li>EventProcessorDocument</li>
     </ul>
-   </div><br><br>  
+   </div><br>
+
+  ---
+  
   <div class="boxed">
     <b>Pre-Run Validator Plugin</b>
     <br><br>
@@ -188,7 +245,10 @@
       <li>EventProcessorDocument</li>
       <li>SystemDocument</li>
     </ul>
-   </div><br><br>  
+   </div><br>
+
+  ---
+  
   <div class="boxed">
     <b>Secret Extractor Plugin</b>
     <br><br>
@@ -198,7 +258,10 @@
     <ul>
       <li>RootDocument</li>
     </ul>
-   </div><br><br>  
+   </div><br>
+
+  ---
+  
   <div class="boxed">
     <b>Export Target Plugin</b>
     <br><br>
@@ -208,7 +271,10 @@
     <ul>
       <li>RootDocument</li>
     </ul>
-   </div><br><br>  
+   </div><br>
+
+  ---
+  
   <div class="boxed">
     <b>Dead Message Queue (<abbr title="Dead Message Queue">DMQ</abbr>) Plugin</b>
     <br><br>
@@ -219,6 +285,9 @@
     <ul>
       <li>RootDocument</li>
     </ul>
-  </div>
+  </div><br>
+
+  ---
+  
 </div>
 </p>

@@ -52,7 +52,7 @@
          }
       },
       "system_def": {
-         "file": "/tmp/my.txt"
+         "file": "${sys:java.io.tmpdir}/my.txt"
       }
    }
 ```
