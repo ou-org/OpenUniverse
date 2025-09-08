@@ -2,9 +2,9 @@
 OpenUniverse
 </h1>
 
+<a title="Category UaC (Universe as Code)" href="https://github.com/ou-org/OpenUniverse"><img src="https://img.shields.io/badge/category-UaC_(Universe_as_Code)-blueviolet?style=flat-square"></a>
 <a title="License MIT" href="https://github.com/ou-org/OpenUniverse/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square"></a>
 <a title="Latest release" href="https://github.com/ou-org/OpenUniverse/releases"><img src="https://img.shields.io/github/v/release/ou-org/OpenUniverse?style=flat-square&color=28A745"></a>
-<a title="Powered by OpenUniverse" href="https://github.com/ou-org/OpenUniverse"><img src="https://img.shields.io/badge/powered_by-OpenUniverse-blueviolet?style=flat-square"></a>
 
 <h2>What is Universe?</h2>
 <p>
