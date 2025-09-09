@@ -136,6 +136,7 @@ Open your browser and go to:
 
 - [Hello, Universe!](doc/examples/HelloUniverse.md)
 - [Check File Size](doc/examples/CheckFileSize.md)
+<!--
 - [Document Validator](doc/examples/document-validator.json)
 - [Hello Solr](doc/examples/hello-solr.json)
 - [Hello SSE (JSON)](doc/examples/hello-sse.json)
@@ -156,6 +157,7 @@ Open your browser and go to:
 - [Send to Solr](scripts/send-to-solr.py)
 - [SSE](scripts/sse.py)
 - [Validator](scripts/validator.py)
+-->
 
 ## Useful Guides
 
