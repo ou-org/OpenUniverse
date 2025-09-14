@@ -65,11 +65,14 @@ import org.ou.common.constants.IMsg;
 import org.ou.common.constants.IPropPrefixes;
 import org.ou.common.constants.ISystemProperties;
 import org.ou.common.cron.CronUtils;
+import org.ou.common.utils.CommitSignInfo;
+import org.ou.common.utils.CommitSignatureUtils;
 import org.ou.common.utils.CommonUtils;
 import org.ou.common.utils.CurrentDateTimeUtils;
 import org.ou.common.utils.EncryptedPlaceholderUtils;
 import org.ou.common.utils.FileUtils;
 import org.ou.common.utils.GitUtils;
+import org.ou.common.utils.JarUtils;
 import org.ou.common.utils.MdUtils;
 import org.ou.common.utils.PasswordDialogUtils;
 import org.ou.common.utils.RunCommandUtils;
@@ -231,7 +234,12 @@ public class MainProcess {
         }
 
         MainProcess.noColor = noColor;
+
         repoPath = Paths.get(repoDir);
+
+        Path jarSHA256reportPath = repoPath.resolve("jar-SHA256-report.txt");
+
+        Path jarSignerReportPath = repoPath.resolve("jar-jarsigner-report.txt");
 
         // Path to the .git directory, which contains all Git-related metadata  
         Path dotGitPath = repoPath.resolve(".git");
@@ -315,6 +323,7 @@ public class MainProcess {
                         System.exit(0);
                     } else {
                         CommonUtils.exitWithMsg(IMsg.CAN_NOT_STOP);
+                        return;
                     }
                 }
             }
@@ -336,7 +345,7 @@ public class MainProcess {
         }
 
         if (!cleanRepo) {
-            CommonUtils.exitWithMsg(IMsg.REPOSITORY_IS_NOT_CLEAN);
+            CommonUtils.exitWithMsg(IMsg.GIT_REPOSITORY_IS_NOT_CLEAN);
             return;
         }
 
@@ -345,14 +354,41 @@ public class MainProcess {
             return;
         }
 
+        if (CommitSignatureUtils.isRepoSigningCommits(repository)) {
+            CommitSignInfo commitSignInfo = CommitSignatureUtils.getCommitSignInfo(repository, "HEAD");
+            if (!commitSignInfo.issuerKeyIdTrusted) {
+                CommonUtils.exitWithMsg(IMsg.COMMIT_SIGNATURE_VERIFICATION_FAILED);
+                return;
+            }
+
+            if ( //
+                    commitSignInfo.pgpSignature == null
+                    || //
+                    commitSignInfo.signedData == null
+                    || //
+                    commitSignInfo.issuerKeyIdHex == null
+                    || //
+                    !commitSignInfo.issuerKeyIdTrusted //
+                    ) {
+                CommonUtils.exitWithMsg(IMsg.COMMIT_SIGNATURE_VERIFICATION_FAILED);
+                return;
+            }
+            byte[] keyring = CommitSignatureUtils.exportPublicKeys();
+            boolean verified = CommitSignatureUtils.verifyCommitSignature(commitSignInfo, keyring);
+            if (!verified) {
+                CommonUtils.exitWithMsg(IMsg.COMMIT_SIGNATURE_VERIFICATION_FAILED);
+                return;
+            }
+        }
+
         // BEGIN .gitignore
-        String gitignoreFileName = gitignorePath.getFileName().toString();
+        //String gitignoreFileName = gitignorePath.getFileName().toString();
         String lockedFilePattern = lockedPath.getFileName().toString();
         String lattestCommitHashFilePathPattern = lattestCommitHashFilePath.getFileName().toString();
 
         if (!Files.exists(gitignorePath)) {
             Files.writeString(gitignorePath, "", StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.SYNC);
-            GitUtils.commitFile(git, gitignoreFileName);
+            //GitUtils.commitFile(git, gitignoreFileName);
         }
 
         List<String> gitignoreLines = Files.readAllLines(gitignorePath);
@@ -370,20 +406,21 @@ public class MainProcess {
                 foundLattestCommitHashFile = true;
             }
         }
+
         if (!foundLocked) {
             Files.writeString(gitignorePath, "\n" + lockedFilePattern, StandardOpenOption.WRITE, StandardOpenOption.APPEND, StandardOpenOption.SYNC);
-            GitUtils.commitFile(git, gitignoreFileName);
+            //GitUtils.commitFile(git, gitignoreFileName);
         }
         if (!foundLattestCommitHashFile) {
             Files.writeString(gitignorePath, "\n" + lattestCommitHashFilePathPattern, StandardOpenOption.WRITE, StandardOpenOption.APPEND, StandardOpenOption.SYNC);
-            GitUtils.commitFile(git, gitignoreFileName);
+            //GitUtils.commitFile(git, gitignoreFileName);
         }
         // END .gitignore
 
         if (!Files.exists(nodeIdFilePath)) {
-            String nodeIdFileName = nodeIdFilePath.getFileName().toString();
+            //String nodeIdFileName = nodeIdFilePath.getFileName().toString();
             Files.writeString(nodeIdFilePath, UUID.randomUUID().toString(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.SYNC);
-            GitUtils.commitFile(git, nodeIdFileName);
+            //GitUtils.commitFile(git, nodeIdFileName);
         }
         String nodeId = Files.readString(nodeIdFilePath);
 
@@ -462,12 +499,13 @@ public class MainProcess {
                         appendToErrorLog(t, false);
                     } finally {
                         try {
-                            String errorLogFileName = errorLogPath.getFileName().toString();
-                            GitUtils.commitFile(git, errorLogFileName);
-                            System.err.println("Waiting for last commit" + (noColor ? OK : OK_COLOR));
-                            while (!(GitUtils.isCommitted(git, errorLogPath) && GitUtils.isCommitted(git, logPath))) {
-                                Thread.sleep(1000);
-                            }
+                            // //String errorLogFileName = errorLogPath.getFileName().toString();
+                            // //GitUtils.commitFile(git, errorLogFileName);
+                            // System.err.println("Waiting for last commit" + (noColor ? OK : OK_COLOR));
+                            // while (!(GitUtils.isCommitted(git, errorLogPath) && GitUtils.isCommitted(git, logPath))) {
+                            //     Thread.sleep(1000);
+                            // }
+
                             System.err.println("Closing repository" + (noColor ? OK : OK_COLOR));
                             git.close();
                             System.err.println("Unlocking repository" + (noColor ? OK : OK_COLOR));
@@ -475,6 +513,9 @@ public class MainProcess {
                             System.err.println("Deleting temporary files" + (noColor ? OK : OK_COLOR));
                             FileUtils.deleteDir(tmpSolrHomeDir);
                             FileUtils.deleteDir(tmpRepoDir);
+
+                            GitUtils.runCommit(repoDir, "Pre-shutdown commit");
+
                             System.err.println();
                             System.err.println("*** Shutdown completed ***");
                             System.err.println();
@@ -726,6 +767,22 @@ public class MainProcess {
             System.err.println(SEPARATOR_80_WITH_COLOR_SUPPORT);
             System.err.println();
 
+            Path jarPath = JarUtils.getSelfJar();
+            if (jarPath != null) {
+                JarUtils.createJarSHA256Report(jarPath, jarSHA256reportPath);
+                JarUtils.createJarSignerReport(jarPath, jarSignerReportPath);
+
+                String jarSignerReport = Files.readString(jarSignerReportPath);
+                if (jarSignerReport.contains("jar verified.")) {
+                    System.err.println("INFO: The OpenUniverse JAR file signature is verified.");
+                } else {
+                    CommonUtils.exitWithMsg(IMsg.BAD_OPEN_UNIVERSE_JAR, repoPath);
+                    return;
+                }
+            }
+            
+            GitUtils.runCommit(repoDir, "Pre-start commit");
+
             scheduler.start();
 
             startToErrorLog();
@@ -741,9 +798,9 @@ public class MainProcess {
             }
             Iterable<RevCommit> commits = git.log().call();
             for (RevCommit commit : commits) {
-                if (commit.getShortMessage().startsWith(GitUtils.INTERNAL_COMMIT_MSG_PREFIX)) {
-                    continue;
-                }
+                // if (commit.getShortMessage().startsWith(GitUtils.INTERNAL_COMMIT_MSG_PREFIX)) {
+                //     continue;
+                // }
                 if (commit.getCommitterIdent().getWhenAsInstant().toEpochMilli() < lastCommitTime) {
                     break;
                 }
@@ -777,8 +834,8 @@ public class MainProcess {
                 Files.writeString(lockedPath, statusJson, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.SYNC);
 
                 Files.writeString(schemaJsonPath, schemaJson, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.SYNC);
-                String schemaJsonFileName = schemaJsonPath.getFileName().toString();
-                GitUtils.commitFile(git, schemaJsonFileName);
+                //String schemaJsonFileName = schemaJsonPath.getFileName().toString();
+                //GitUtils.commitFile(git, schemaJsonFileName);
 
                 // *** Print stat START *** //
                 System.err.println("INFO: Started at: %s".formatted(STARTED_AT.toString()));
@@ -1084,8 +1141,8 @@ public class MainProcess {
         try {
             if (!Files.exists(errorLogPath) || Files.size(errorLogPath) != 0) {
                 Files.write(errorLogPath, new byte[0], StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.SYNC);
-                String errorLogFileName = errorLogPath.getFileName().toString();
-                GitUtils.commitFile(git, errorLogFileName);
+                //String errorLogFileName = errorLogPath.getFileName().toString();
+                //GitUtils.commitFile(git, errorLogFileName);
             }
         } catch (Throwable e) {
             e.printStackTrace();

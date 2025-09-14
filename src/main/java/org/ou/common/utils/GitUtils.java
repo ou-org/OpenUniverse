@@ -22,6 +22,8 @@
  */
 package org.ou.common.utils;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -34,8 +36,8 @@ import java.time.ZoneOffset;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.FooterLine;
@@ -46,11 +48,11 @@ import org.eclipse.jgit.treewalk.TreeWalk;
  * <p>
  * GitUtils class.</p>
  *
-
+ *
  * @since 1.0.21
  */
 public class GitUtils {
-    public static final String INTERNAL_COMMIT_MSG_PREFIX = "### ";
+    //public static final String INTERNAL_COMMIT_MSG_PREFIX = "### ";
 
     /**
      * <p>
@@ -90,17 +92,16 @@ public class GitUtils {
         return latestCommit;
     }
 
-    /**
-     *
-     * @param git
-     * @param file
-     * @throws Exception
-     */
-    public static synchronized void commitFile(Git git, String file) throws Exception {
-        git.add().addFilepattern(file).call();
-        git.commit().setMessage(INTERNAL_COMMIT_MSG_PREFIX + "Commit " + file).call();
-    }
-
+    // /**
+    //  *
+    //  * @param git
+    //  * @param file
+    //  * @throws Exception
+    //  */
+    // public static synchronized void commitFile(Git git, String file) throws Exception {
+    // //    git.add().addFilepattern(file).call();
+    // //    git.commit().setMessage(INTERNAL_COMMIT_MSG_PREFIX + "Commit " + file).call();
+    // }y
     /**
      * <p>
      * revCommitToMap.</p>
@@ -194,24 +195,57 @@ public class GitUtils {
         }
     }
 
-    /**
-     *
-     * @param git
-     * @param filePath
-     * @return
-     * @throws Exception
-     */
-    public static boolean isCommitted(Git git, Path filePath) throws Exception {
-        String fileName = filePath.getFileName().toString();
-        Status status = git.status().call();
-        if (status.getUntracked().contains(fileName)
-                || status.getModified().contains(fileName)
-                || status.getAdded().contains(fileName)
-                || status.getChanged().contains(fileName)
-                || status.getRemoved().contains(fileName)
-                || status.getMissing().contains(fileName)) {
-            return false;
+    public static void runCommit(String repoDir, String commitMessage) throws Exception {
+        String[] command = {
+            "sh", "-c",
+            "cd \"" + repoDir + "\" && git add . && git commit -S -m \"" 
+                + commitMessage.replace("\"", "\\\"") + "\""
+        };
+
+        ProcessBuilder pb = new ProcessBuilder(command);
+        pb.redirectErrorStream(true); // merge stdout + stderr
+        Process process = pb.start();
+
+        StringBuilder output = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(process.getInputStream()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                output.append(line).append("\n");
+            }
         }
-        return true;
+
+        int exitCode = process.waitFor();
+        String gitOutput = output.toString();
+
+        if (exitCode == 0) {
+            System.err.println("INFO: %s OK".formatted(commitMessage));
+        } else if (exitCode == 1 && gitOutput.contains("nothing to commit")) {
+            System.err.println("INFO: No changes to commit. Working tree clean.");
+        } else if (exitCode == 128) {
+            throw new RuntimeException("ERROR: Not a git repository: " + gitOutput);
+        } else {
+            throw new RuntimeException("ERROR: Git commit failed (code " + exitCode + "):\n" + gitOutput);
+        }
     }
+    // /**
+    //  *
+    //  * @param git
+    //  * @param filePath
+    //  * @return
+    //  * @throws Exception
+    //  */
+    // public static boolean isCommitted(Git git, Path filePath) throws Exception {
+    //     String fileName = filePath.getFileName().toString();
+    //     Status status = git.status().call();
+    //     if (status.getUntracked().contains(fileName)
+    //             || status.getModified().contains(fileName)
+    //             || status.getAdded().contains(fileName)
+    //             || status.getChanged().contains(fileName)
+    //             || status.getRemoved().contains(fileName)
+    //             || status.getMissing().contains(fileName)) {
+    //         return false;
+    //     }
+    //     return true;
+    // }
 }

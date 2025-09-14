@@ -47,7 +47,8 @@
     <dependencies>
 
         <!-- https://mvnrepository.com/artifact/org.eclipse.jgit/org.eclipse.jgit -->
-        <!-- License(s): BSD 3-clause, EDL 1.0 -->
+        <!-- License(s): BSD 3-clause -->
+        <!-- License(s): EDL 1.0 -->
         <dependency>
             <groupId>org.eclipse.jgit</groupId>
             <artifactId>org.eclipse.jgit</artifactId>
@@ -99,6 +100,23 @@
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
             <version>2.5.0-rc2</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk18on -->
+        <!-- License(s): BouncyCastle -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk18on</artifactId>
+            <version>1.81</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.bouncycastle/bcpg-jdk18on -->
+        <!-- License(s): Apache 2.0 -->
+        <!-- License(s): BouncyCastle -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpg-jdk18on</artifactId>
+            <version>1.81</version>
         </dependency>
 
     </dependencies>
@@ -185,7 +203,7 @@
                         </manifest>
                         <manifestEntries>
                             <Build-Time>${maven.build.timestamp}</Build-Time>                           
-                            <Implementation-Title>OpenUnvierse — The REO (Reactive Event Orchestration) platform</Implementation-Title>
+                            <Implementation-Title>OpenUnvierse — The UaC (Universe as Code) platform</Implementation-Title>
                             <Implementation-Version>${project.version}</Implementation-Version>
                             <Implementation-Vendor>OpenUnvierse project</Implementation-Vendor>
                             <Multi-Release>true</Multi-Release>
@@ -208,13 +226,41 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jarsigner-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>sign-jar</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <archive>${project.build.directory}/${project.build.finalName}.jar</archive>
+                    <!-- Specify the path to the PKCS#12 keystore file -->
+                    <keystore>${project.basedir}/sign-jar/keystore.p12</keystore>
+                    <!-- Explicitly set the store type to PKCS12 -->
+                    <storetype>PKCS12</storetype>
+                    <!-- Hardcoded alias used during the openssl pkcs12 command -->
+                    <alias>signing_alias</alias>
+                    <!-- Hardcoded keystore password, NOT RECOMMENDED FOR PRODUCTION! -->
+                    <storepass>your_password</storepass>
+                    <!-- Hardcoded key password, NOT RECOMMENDED FOR PRODUCTION! -->
+                    <keypass>your_password</keypass>
+                    <tsa>http://timestamp.digicert.com</tsa>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
                 <executions>
                     <execution>
                         <id>wrap-jar</id>
-                        <phase>package</phase>
+                        <phase>verify</phase>
                         <goals>
                             <goal>exec</goal>
                         </goals>
@@ -275,35 +321,11 @@
      ```
    - Then exits with status code `1`.
                                     -->
-                        <![CDATA[
-echo '#!/bin/sh' > target/ou && \
-echo 'JAVA_EXEC=""' >> target/ou && \
-echo 'if [ -x "./jre/bin/java" ]; then' >> target/ou && \
-echo '  JAVA_EXEC="./jre/bin/java"' >> target/ou && \
-echo 'elif [ -n "$OU_JAVA_HOME" ]; then' >> target/ou && \
-echo '  JAVA_EXEC="$OU_JAVA_HOME/bin/java"' >> target/ou && \
-echo 'elif [ -n "$JAVA_HOME" ]; then' >> target/ou && \
-echo '  JAVA_EXEC="$JAVA_HOME/bin/java"' >> target/ou && \
-echo 'elif java -version >/dev/null 2>&1; then' >> target/ou && \
-echo '  JAVA_EXEC=java' >> target/ou && \
-echo 'fi' >> target/ou && \
-echo 'if [ -z "$JAVA_EXEC" ]; then' >> target/ou && \
-echo '  echo "Java not found."' >> target/ou && \
-echo '  exit 1' >> target/ou && \
-echo 'fi' >> target/ou && \
-echo 'JVM_ARGS_FILE="jvm.options"' >> target/ou && \
-echo 'if [ -f "$JVM_ARGS_FILE" ]; then' >> target/ou && \
-echo '  JVM_ARGS=$(cat "$JVM_ARGS_FILE")' >> target/ou && \
-echo 'else' >> target/ou && \
-echo '  JVM_ARGS=""' >> target/ou && \
-echo 'fi' >> target/ou && \
-echo 'exec "$JAVA_EXEC" $JVM_ARGS -Dou.selfcontained=true -jar "$0" "$@"' >> target/ou && \
-echo 'code=$?' >> target/ou && \
-echo 'exit $code' >> target/ou && \
-cat target/ou-${project.version}.jar >> target/ou && \
-chmod +x target/ou
-                        ]]>
-                                </argument>
+<![CDATA[
+          mkdir -p target && \
+          cat src/main/scripts/ou.sh target/ou-${project.version}.jar > target/ou && \
+          chmod +x target/ou
+          ]]>                                </argument>
                             </arguments>
                         </configuration>
                     </execution>

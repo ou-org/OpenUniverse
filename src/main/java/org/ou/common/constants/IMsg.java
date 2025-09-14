@@ -23,13 +23,14 @@
 package org.ou.common.constants;
 
 /**
- * <p>IMsg interface.</p>
+ * <p>
+ * IMsg interface.</p>
  *
  * @since 1.0.21
  */
 public interface IMsg {
 
-    String REPOSITORY_IS_NOT_CLEAN = "ERROR: Git repository is not clean. Commit required.";
+    String GIT_REPOSITORY_IS_NOT_CLEAN = "ERROR: Git repository is not clean. Commit required.";
     String REPOSITORY_IS_LOCKED = "ERROR: Repository is locked. Another process may be in progress. Lock file: %s.";
     String CONSTRAINT_VIOLATION = "ERROR: Document constraint violation: %s. Document: %s.";
     String INVALID_RECORD_TYPE = "ERROR: Invalid record type: %s. Valid record types are: start, stop, calendar, scheduller, trigger, processor, Document: %s.";
@@ -44,4 +45,6 @@ public interface IMsg {
     String MULTIPLE_PROPERTIES_FOUND = "ERROR: Multiple properties files found.";
     String NOTHIG_TO_STOP = "ERROR: Nothig to stop.";
     String CAN_NOT_STOP = "ERROR: Can't stop.";
+    String COMMIT_SIGNATURE_VERIFICATION_FAILED = "ERROR: Commit signature verification failed.";
+    String BAD_OPEN_UNIVERSE_JAR = "ERROR: Bad OpenUniverse jar file.";
 }

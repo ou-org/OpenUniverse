@@ -1,5 +1,30 @@
 # OpenUniverse build guide
 
+## Prepare keystore
+
+### Step 1: Generate a private key with OpenSSL
+First, create a new private key.
+This key is used to sign your JAR file and should be kept secure.
+For strong security, a 2048-bit RSA key is standard.
+
+```bash
+openssl genrsa -out private.key 2048
+```
+
+### Step 2: Create a self-signed certificate
+Create a self-signed X.509 certificate using the private key. You will be asked for information about the entity the certificate is for. 
+
+```bash
+openssl req -new -x509 -key private.key -out certificate.crt -days 365 -subj "/CN=MyCompany/O=MyCompany/L=City/C=US"
+```
+
+### Step 3: Combine the key and certificate into a PKCS#12 keystore
+Combine the private key and certificate into a PKCS#12 file for use as a keystore. You'll need to set an alias and a password for the keystore. 
+
+```bash
+openssl pkcs12 -export -in certificate.crt -inkey private.key -out keystore.p12 -name "signing_alias" -passout pass:your_password
+```
+
 ## Building executable with Maven
 
 This section describes how to build your Java application using [Apache Maven](https://maven.apache.org/), prior to packaging it into an AppImage.

@@ -39,5 +39,5 @@ public interface ISystemProperties {
     String OS_NAME = System.getProperty("os.name");
     String OS_VERSION = System.getProperty("os.version");
     String OS_ARCH = System.getProperty("os.arch");
-    String OU_STANDALONE = System.getProperty("ou.selfcontained");
+    String OU_STANDALONE = System.getProperty("org.ou.selfcontained");
 }

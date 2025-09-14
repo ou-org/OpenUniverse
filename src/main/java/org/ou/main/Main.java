@@ -155,14 +155,19 @@ public class Main {
                 printHelp();
                 return;
             }
-            case "start" -> start = true;
-            case "stop" -> stop = true;
-            case "schema" -> printSchema = true;
-            case "targets" -> printTargets = true;
-            case "status" -> printStatus = true;
+            case "start" ->
+                start = true;
+            case "stop" ->
+                stop = true;
+            case "schema" ->
+                printSchema = true;
+            case "targets" ->
+                printTargets = true;
+            case "status" ->
+                printStatus = true;
             default -> {
                 System.err.println(createHeader());
-                System.err.println("Unknown command!");
+                System.err.println("Unknown command! Only 'help', 'schema', 'targets', 'status', 'start' and 'stop' are supported.");
                 System.exit(-1);
                 return;
             }
@@ -177,12 +182,18 @@ public class Main {
         if (args.length > 2) {
             for (int i = 2; i < args.length; i++) {
                 switch (args[i]) {
-                    case "--stdout", "-o" -> outputToConsole = true;
-                    case "--no-color", "-n" -> noColor = true;
-                    case "--prompt-sec", "-p" -> stdinSec = true;
-                    case "--gui-sec", "-g" -> gui = true;
-                    case "--secret", "-s" -> secret = args[++i].toCharArray();
-                    case "--assume-yes", "-y" -> assumeYes = true;
+                    case "--stdout", "-o" ->
+                        outputToConsole = true;
+                    case "--no-color", "-n" ->
+                        noColor = true;
+                    case "--prompt-sec", "-p" ->
+                        stdinSec = true;
+                    case "--gui-sec", "-g" ->
+                        gui = true;
+                    case "--secret", "-s" ->
+                        secret = args[++i].toCharArray();
+                    case "--assume-yes", "-y" ->
+                        assumeYes = true;
                     default -> {
                         System.err.println(createHeader());
                         System.err.println("Unknown flag or option!");

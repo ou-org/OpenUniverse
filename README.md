@@ -56,18 +56,31 @@ intelligently.
 </p>
 <h2>How it works</h2>
 <p>
-  OpenUniverse operates in several stages to transform static documents definitions into a dynamic,
-  event-driven
-  infrastructure.
+  OpenUniverse operates in several stages to transform static document definitions into a dynamic,
+  event-driven infrastructure.
   <br><br>
   First, the repository working directory is scanned for documents. Each document is represented as a JSON
   object. A single JSON file may contain a single document or an array of documents. During this scan,
   OpenUniverse automatically skips any documents with unsupported specification versions or those explicitly
   marked as disabled.
   <br><br>
+  If the repository is marked to enforce signed commits (via repository configuration), OpenUniverse performs
+  commit signature verification before any constraint checks:
+  <ul>
+    <li>The system extracts the HEAD commit signature and verifies its cryptographic validity.</li>
+    <li>It evaluates the signing key:
+      <ul>
+        <li>Only keys marked as ultimately trusted (u) or fully trusted (f) in the GnuPG keyring are accepted.</li>
+        <li>Keys that are revoked, expired, disabled, marginal, or unknown are rejected.</li>
+      </ul>
+    </li>
+    <li>If the signature verification fails or the key does not meet the strict trust criteria, processing halts to prevent execution of untrusted or tampered documents.</li>
+  </ul>
+  If the repository is not marked for signed commits, this step is skipped and documents are processed normally.
+  <br><br>
   Next, each discovered document is passed through an optional chain of pre-run constraints, if declared.
   Constraints ensure that documents meet structural, logical, and environmental requirements before execution.
-  Processing does not starts if any constraint reports invalid requirements.
+  Processing does not start if any constraint reports invalid requirements.
   <br><br>
   Once validation is complete, OpenUniverse enters the discovery phase. Here, the system analyzes declared
   search queries, resolves cross-references between documents, and maps their relationships.
@@ -77,12 +90,10 @@ intelligently.
 <ul>
   <li><b>Triggers</b> fire events based on conditions, calendars, or schedules</li>
   <li><b>Processors</b> consume event messages and execute the appropriate activities across <b>systems</b> defined
-    in
-    <b>jobs</b>
-  </li>
+      in <b>jobs</b></li>
   <li><b>Export targets</b> deliver data to external backends for storage or further processing</li>
   <li><b>DMQ</b> intercepts undeliverable or failed messages, routing them into a dedicated dead-message queue
-    for later inspection, retries, or manual handling</li>
+      for later inspection, retries, or manual handling</li>
 </ul>
 </p>
 

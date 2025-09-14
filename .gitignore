@@ -3,5 +3,6 @@
 /OpenUniverse.AppDir/jre
 /OpenUniverse.AppDir/ou
 /OpenUniverse.AppDir/.DirIcon
-/OpenUniverse/example/HelloUniverseRepo
-/OpenUniverse/example/HelloUniverse.zip
+/example/generated
+/sign-jar/keys
+

@@ -47,7 +47,6 @@ import org.ou.common.constants.IConstants;
 import org.ou.common.constants.IEventConst;
 import org.ou.common.constants.IRecordConst;
 import org.ou.common.utils.CommonUtils;
-import org.ou.common.utils.GitUtils;
 import org.ou.common.utils.JvmMetricsUtils;
 import org.ou.common.utils.SignatureUtils;
 import org.ou.to.AbstractTo;
@@ -136,8 +135,8 @@ public class LoggerUtils extends Thread {
 
         if (IEventConst.EVENT_SOURCE_CLASS_VALUE_CONTROL.equals(eventClass)) {
             Files.writeString(logPath, om.writeValueAsString(mapE) + '\n', StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC);
-            String logFileName = logPath.getFileName().toString();
-            GitUtils.commitFile(git, logFileName);
+            //String logFileName = logPath.getFileName().toString();
+            //GitUtils.commitFile(git, logFileName);
         }
 
         Map<String, Object> treeMap = new TreeMap<>(mapE);
