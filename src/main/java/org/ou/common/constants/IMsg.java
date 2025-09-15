@@ -44,7 +44,8 @@ public interface IMsg {
     String NO_PROPERTIES_FOUND = "ERROR: No properties file found.";
     String MULTIPLE_PROPERTIES_FOUND = "ERROR: Multiple properties files found.";
     String NOTHIG_TO_STOP = "ERROR: Nothig to stop.";
-    String CAN_NOT_STOP = "ERROR: Can't stop.";
+    String CAN_NOT_STOP = "ERROR: Can't stop."; 
+    String INFO_PROCESS_STOPPED = "INFO: Process stopped.";
     String COMMIT_SIGNATURE_VERIFICATION_FAILED = "ERROR: Commit signature verification failed.";
-    String BAD_OPEN_UNIVERSE_JAR = "ERROR: Bad OpenUniverse jar file.";
+    String JAR_SIGNATURE_VERIFICATION_FAILED = "ERROR: JAR signature verification failed.";
 }

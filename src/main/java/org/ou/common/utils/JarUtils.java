@@ -1,9 +1,10 @@
 package org.ou.common.utils;
 
 import java.io.BufferedInputStream;
-import java.io.File;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
@@ -14,17 +15,15 @@ import java.util.Locale;
 public class JarUtils {
 
     /**
-     * Runs jarsigner verification on the given jar file and saves report into
-     * repoDir/jarsigner_report.txt
+     * Runs jarsigner verification on the given jar file and returns the report
+     * as a string.
      *
-     * @param repoDir Directory where report file will be saved
      * @param jarPath Path to jar file (e.g. self-jar)
+     * @return Full jarsigner report as string
      * @throws IOException if process fails or verification fails
      * @throws InterruptedException if process is interrupted
      */
-    public static void createJarSignerReport(Path jarPath, Path reportFilePath) throws IOException, InterruptedException {
-        File reportFile = reportFilePath.toFile();
-
+    public static String createJarSignerReport(Path jarPath) throws IOException, InterruptedException {
         ProcessBuilder pb = new ProcessBuilder(
                 "jarsigner",
                 "-verify",
@@ -32,18 +31,24 @@ public class JarUtils {
                 "-certs",
                 jarPath.toString()
         );
-        pb.redirectErrorStream(true); // merge stderr into stdout
-        pb.redirectOutput(reportFile);
+        pb.redirectErrorStream(true);
 
         Process process = pb.start();
-        int exitCode = process.waitFor();
 
-        if (exitCode != 0) {
-            throw new IOException("Error: JAR signature verification failed. See report: " + reportFile);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (InputStream is = process.getInputStream()) {
+            is.transferTo(baos);
         }
+
+        int exitCode = process.waitFor();
+        if (exitCode != 0) {
+            return "";
+        }
+
+        return baos.toString(StandardCharsets.UTF_8);
     }
 
-    public static void createJarSHA256Report(Path jarPath, Path reportFilePath) throws IOException, NoSuchAlgorithmException {
+    public static String createJarSHA256Report(Path jarPath) throws IOException, NoSuchAlgorithmException {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         try (InputStream is = new BufferedInputStream(Files.newInputStream(jarPath))) {
             byte[] buffer = new byte[8192];
@@ -53,7 +58,7 @@ public class JarUtils {
             }
         }
         byte[] hashBytes = digest.digest();
-        Files.writeString(reportFilePath, HexFormat.of().formatHex(hashBytes).toLowerCase(Locale.ENGLISH));
+        return HexFormat.of().formatHex(hashBytes).toLowerCase(Locale.ENGLISH);
     }
 
     /**
@@ -69,9 +74,10 @@ public class JarUtils {
                     .toURI()
                     .getPath();
 
-            if (pathStr.endsWith("/")) 
+            if (pathStr.endsWith("/")) {
                 return null; // Running from IDE or classes, not a JAR
-            return Path.of(pathStr);
+
+                        }return Path.of(pathStr);
         } catch (Exception e) {
             e.printStackTrace();
             return null; // fallback if something went wrong

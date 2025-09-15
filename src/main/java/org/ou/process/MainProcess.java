@@ -309,6 +309,7 @@ public class MainProcess {
             Number pidObj = (Number) statusMap.get("pid");
             if (pidObj == null) {
                 CommonUtils.exitWithMsg(IMsg.NOTHIG_TO_STOP);
+                return;
             } else {
                 long pid = pidObj.longValue();
                 Optional<ProcessHandle> optProcessHandle = ProcessHandle.of(pid);
@@ -319,8 +320,9 @@ public class MainProcess {
                         ok = processHandle.destroyForcibly();
                     }
                     if (ok) {
-                        System.err.println("Process stopped");
+                        System.err.println(IMsg.INFO_PROCESS_STOPPED);
                         System.exit(0);
+                        return;
                     } else {
                         CommonUtils.exitWithMsg(IMsg.CAN_NOT_STOP);
                         return;
@@ -769,14 +771,16 @@ public class MainProcess {
 
             Path jarPath = JarUtils.getSelfJar();
             if (jarPath != null) {
-                JarUtils.createJarSHA256Report(jarPath, jarSHA256reportPath);
-                JarUtils.createJarSignerReport(jarPath, jarSignerReportPath);
+                String jarSHA256Report = JarUtils.createJarSHA256Report(jarPath);
+                Files.writeString(jarSHA256reportPath, jarSHA256Report, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.SYNC);
 
-                String jarSignerReport = Files.readString(jarSignerReportPath);
+                String jarSignerReport = JarUtils.createJarSignerReport(jarPath);
+                Files.writeString(jarSignerReportPath, jarSignerReport, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.SYNC);
+
                 if (jarSignerReport.contains("jar verified.")) {
                     System.err.println("INFO: The OpenUniverse JAR file signature is verified.");
                 } else {
-                    CommonUtils.exitWithMsg(IMsg.BAD_OPEN_UNIVERSE_JAR, repoPath);
+                    CommonUtils.exitWithMsg(IMsg.JAR_SIGNATURE_VERIFICATION_FAILED, repoPath);
                     return;
                 }
             }
