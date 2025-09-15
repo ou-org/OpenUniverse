@@ -226,29 +226,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jarsigner-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <id>sign-jar</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <archive>${project.build.directory}/${project.build.finalName}.jar</archive>
-                    <keystore>${env.SIGN_JAR_KEYSTORE}</keystore>
-                    <storetype>${env.SIGN_JAR_STORETYPE}</storetype>
-                    <alias>${env.SIGN_JAR_ALIAS}</alias>
-                    <storepass>${env.SIGN_JAR_STOREPASS}</storepass>
-                    <keypass>${env.SIGN_JAR_KEYPASS}</keypass>
-                    <tsa>${env.SIGN_JAR_TSA}</tsa>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
@@ -325,6 +302,29 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jarsigner-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>sign-jar</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <archive>${project.build.directory}/${project.build.finalName}.jar</archive>
+                    <keystore>${env.SIGN_JAR_KEYSTORE}</keystore>
+                    <storetype>${env.SIGN_JAR_STORETYPE}</storetype>
+                    <alias>${env.SIGN_JAR_ALIAS}</alias>
+                    <storepass>${env.SIGN_JAR_STOREPASS}</storepass>
+                    <keypass>${env.SIGN_JAR_KEYPASS}</keypass>
+                    <tsa>${env.SIGN_JAR_TSA}</tsa>
+                </configuration>
             </plugin>
         </plugins>
     </build>
