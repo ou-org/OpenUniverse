@@ -239,7 +239,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <archive>target/${project.build.finalName}.jar</archive>
+                    <archive>${project.build.directory}/${project.build.finalName}.jar</archive>
                     <keystore>${env.SIGN_JAR_KEYSTORE}</keystore>
                     <storetype>${env.SIGN_JAR_STORETYPE}</storetype>
                     <alias>${env.SIGN_JAR_ALIAS}</alias>
