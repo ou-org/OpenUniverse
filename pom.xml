@@ -27,7 +27,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.ou</groupId>
     <artifactId>ou</artifactId>
-    <version>1.0.21</version>
+    <version>${env.OU_VERSION}</version>
     <packaging>jar</packaging>
     <!-- License Information -->
     <licenses>
