@@ -1,12 +1,37 @@
 #!/bin/sh
 
+######################################################
+# OpenUnvierse — The UaC (Universe as Code) platform #
+######################################################
+
+# OpenUniverse Build Script
+# This script builds the OpenUniverse project from source.
+
+set -e
+
+export OU_VERSION="1.0.22"
+
+--------------------------------------------- MODIFIABLE CONFIGURATION BEGIN ------------------------------------------------
 # -----------------------------
 # OUTPUT DIR
 # -----------------------------
 OUT_DIR="$HOME/ou_dist"
 
-export OU_VERSION="1.0.22"
 COMMIT_HASH="" # If unset or empty use the lattest (⚠️ WARNING! NOT RECOMMENDED IN PRODUCTION!)
+
+# -----------------------------
+# URLs & FILES
+# -----------------------------
+REPO_URL="https://github.com/ou-org/OpenUniverse.git"
+
+JDK_TAR_FILE_NAME="jdk-24_linux-x64_bin.tar.gz"
+JDK_TAR_DOWNLOAD_URL="https://download.oracle.com/java/24/latest/$JDK_TAR_FILE_NAME"
+
+APP_IMAGE_TOOL_FILE_NAME="appimagetool-x86_64.AppImage"
+APP_IMAGE_TOOL_DOWNLOAD_URL="https://github.com/AppImage/appimagetool/releases/download/continuous/$APP_IMAGE_TOOL_FILE_NAME"
+
+RUNTIME_x86_64_FILE_NAME="runtime-x86_64"
+RUNTIME_x86_64_DOWNLOAD_URL="https://github.com/AppImage/type2-runtime/releases/download/continuous/$RUNTIME_x86_64_FILE_NAME"
 
 # -----------------------------
 # JAR SIGNING CONFIG
@@ -34,7 +59,7 @@ export SIGN_JAR_TSA="http://timestamp.digicert.com"
 
 #YOUR_40_CHARACTER_HEX_FINGERPRINT="86A32BE7AB448F546095841B16F66731F8F57B73" # If unset or empty, generate unsigned AppImage (⚠️ WARNING! NOT RECOMMENDED IN PRODUCTION!)
 
-set -e
+--------------------------------------------- MODIFIABLE CONFIGURATION END --------------------------------------------------
 
 # -----------------------------
 # PREREQUISITE CHECKS
@@ -45,20 +70,6 @@ for cmd in git curl rsync tar mvn openssl; do
     exit 1
   fi
 done
-
-# -----------------------------
-# URLs
-# -----------------------------
-REPO_URL="https://github.com/ou-org/OpenUniverse.git"
-
-JDK_TAR_FILE_NAME="jdk-24_linux-x64_bin.tar.gz"
-JDK_TAR_DOWNLOAD_URL="https://download.oracle.com/java/24/latest/$JDK_TAR_FILE_NAME"
-
-APP_IMAGE_TOOL_FILE_NAME="appimagetool-x86_64.AppImage"
-APP_IMAGE_TOOL_DOWNLOAD_URL="https://github.com/AppImage/appimagetool/releases/download/continuous/$APP_IMAGE_TOOL_FILE_NAME"
-
-RUNTIME_x86_64_FILE_NAME="runtime-x86_64"
-RUNTIME_x86_64_DOWNLOAD_URL="https://github.com/AppImage/type2-runtime/releases/download/continuous/$RUNTIME_x86_64_FILE_NAME"
 
 # -----------------------------
 # DIRs
