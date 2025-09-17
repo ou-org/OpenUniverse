@@ -7,59 +7,39 @@
 # OpenUniverse Build Script
 # This script builds the OpenUniverse project from source.
 
-set -e
-
-export OU_VERSION="1.0.22"
-
---------------------------------------------- MODIFIABLE CONFIGURATION BEGIN ------------------------------------------------
-# -----------------------------
-# OUTPUT DIR
-# -----------------------------
-OUT_DIR="$HOME/ou_dist"
-
-COMMIT_HASH="" # If unset or empty use the lattest (⚠️ WARNING! NOT RECOMMENDED IN PRODUCTION!)
+export OU_VERSION="1.0.21"
+TAG="v$OU_VERSION"
+COMMIT_HASH=$(git rev-parse "$TAG") # If unset or empty use the lattest (⚠️ WARNING! NOT RECOMMENDED IN PRODUCTION!)
 
 # -----------------------------
-# URLs & FILES
+# URLs
 # -----------------------------
 REPO_URL="https://github.com/ou-org/OpenUniverse.git"
+JDK_TAR_DOWNLOAD_URL="https://download.oracle.com/java/24/latest/jdk-24_linux-x64_bin.tar.gz"
+APP_IMAGE_TOOL_DOWNLOAD_URL="https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage"
+RUNTIME_x86_64_DOWNLOAD_URL="https://github.com/AppImage/type2-runtime/releases/download/continuous/runtime-x86_64"
 
-JDK_TAR_FILE_NAME="jdk-24_linux-x64_bin.tar.gz"
-JDK_TAR_DOWNLOAD_URL="https://download.oracle.com/java/24/latest/$JDK_TAR_FILE_NAME"
 
-APP_IMAGE_TOOL_FILE_NAME="appimagetool-x86_64.AppImage"
-APP_IMAGE_TOOL_DOWNLOAD_URL="https://github.com/AppImage/appimagetool/releases/download/continuous/$APP_IMAGE_TOOL_FILE_NAME"
-
-RUNTIME_x86_64_FILE_NAME="runtime-x86_64"
-RUNTIME_x86_64_DOWNLOAD_URL="https://github.com/AppImage/type2-runtime/releases/download/continuous/$RUNTIME_x86_64_FILE_NAME"
-
-# -----------------------------
-# JAR SIGNING CONFIG
-# -----------------------------
-export SIGN_JAR_KEYSTORE="$HOME/keystore.p12" # Use unexisting keystore file to generate default keystore (⚠️ WARNING! NOT RECOMMENDED IN PRODUCTION!)
-export SIGN_JAR_STORETYPE="PKCS12"
-export SIGN_JAR_ALIAS="signing_alias"
-export SIGN_JAR_KEYPASS="your_password"
-export SIGN_JAR_STOREPASS="your_password"
-export SIGN_JAR_TSA="http://timestamp.digicert.com"
+set -e
+set -a
+. ./build.properties
+set +a
 
 # -----------------------------
-# APP IMAGE SIGNING CONFIG
+# DIRS
 # -----------------------------
+OUT_DIR="$HOME/ou-${OU_VERSION}"
+CACHE_DIR="$HOME/.cache/build-tools"
 
-# Generate a secure GPG key pair using the following command:
-# gpg --batch --passphrase 'YOUR_STRONG_PASSWORD' --pinentry-mode loopback --gen-key <(echo -e 'Key-Type: RSA\nKey-Length: 4096\nSubkey-Type: RSA\nSubkey-Length: 4096\nName-Real: YourName\nName-Email: your-mail@example.com\nExpire-Date: 0\n%commit')
-#
-# ⚠️ Replace `'YOUR_STRONG_PASSWORD'` with a secure passphrase.<br>
-# ⚠️ Replace `YourName` with your name.<br>
-# ⚠️ Replace `your-mail@example.com` with your email address.
-#
-# List Your Secret Keys
-# gpg --list-secret-keys
+mkdir -p "$OUT_DIR"
+mkdir -p "$CACHE_DIR"
 
-#YOUR_40_CHARACTER_HEX_FINGERPRINT="86A32BE7AB448F546095841B16F66731F8F57B73" # If unset or empty, generate unsigned AppImage (⚠️ WARNING! NOT RECOMMENDED IN PRODUCTION!)
-
---------------------------------------------- MODIFIABLE CONFIGURATION END --------------------------------------------------
+# -----------------------------
+# FILE NAMES
+# -----------------------------
+JDK_TAR_FILE_NAME="${JDK_TAR_DOWNLOAD_URL##*/}"
+APP_IMAGE_TOOL_FILE_NAME="${APP_IMAGE_TOOL_DOWNLOAD_URL##*/}"
+RUNTIME_x86_64_FILE_NAME="${RUNTIME_x86_64_DOWNLOAD_URL##*/}"
 
 # -----------------------------
 # PREREQUISITE CHECKS
@@ -72,18 +52,13 @@ for cmd in git curl rsync tar mvn openssl; do
 done
 
 # -----------------------------
-# DIRs
-# -----------------------------
-CACHE_DIR="$HOME/.cache/build-tools"
-
-# -----------------------------
 # ENSURE KEYSTORE EXISTS
 # -----------------------------
 if [ ! -f "$SIGN_JAR_KEYSTORE" ]; then
   echo "Keystore not found at $SIGN_JAR_KEYSTORE"
   echo "Generating new default keystore..."
   KEYS_DIR="$CACHE_DIR/keys"
-  mkdir -p "$CACHE_DIR" "$KEYS_DIR"
+  mkdir -p "$KEYS_DIR"
   export SIGN_JAR_KEYSTORE="$KEYS_DIR/keystore.p12"
 
   # Generate private key for Root CA
@@ -206,7 +181,6 @@ else
     ARCH=x86_64 "$APP_IMAGE_TOOL" "$APP_DIR" "$REPO_DIR/target/ou-linux-x86_64" --runtime-file "$RUNTIME" --sign --sign-key "$YOUR_40_CHARACTER_HEX_FINGERPRINT"
 fi
 
-mkdir -p "$OUT_DIR"
 cp "$REPO_DIR/target/ou-$OU_VERSION.jar" "$OUT_DIR"
 cp "$REPO_DIR/target/ou" "$OUT_DIR"
 cp "$REPO_DIR/target/ou-linux-x86_64" "$OUT_DIR"
