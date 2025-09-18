@@ -1,5 +1,9 @@
 #!/bin/sh
 
+######################################################
+# OpenUnvierse — The UaC (Universe as Code) platform #
+######################################################
+
 JAVA_EXEC=""  # Locate Java
 if [ -x "./jre/bin/java" ]; then
   JAVA_EXEC="./jre/bin/java"

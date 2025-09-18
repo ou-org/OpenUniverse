@@ -23,9 +23,9 @@ public class JarUtils {
      * @throws IOException if process fails or verification fails
      * @throws InterruptedException if process is interrupted
      */
-    public static String createJarSignerReport(Path jarPath) throws IOException, InterruptedException {
+    public static String createJarSignerReport(Path jarPath, String jarsignerExecutable) throws IOException, InterruptedException {
         ProcessBuilder pb = new ProcessBuilder(
-                "jarsigner",
+                jarsignerExecutable,
                 "-verify",
                 "-verbose",
                 "-certs",

@@ -233,6 +233,11 @@ public class MainProcess {
             }
         }
 
+        String appDir = System.getenv("APPDIR"); // Run within AppImage
+        boolean appImage = appDir != null;
+        String jreDir = ISystemProperties.USER_DIR + "/jre";
+        boolean jreDirExists = (Files.isDirectory(Path.of(jreDir)));
+
         MainProcess.noColor = noColor;
 
         repoPath = Paths.get(repoDir);
@@ -546,7 +551,6 @@ public class MainProcess {
         Collection<Integer> groupsIds = UnixUtils.getGroupIds();
         boolean standalone = ISystemProperties.OU_STANDALONE != null && ISystemProperties.OU_STANDALONE.equals("true");
         String stdoutRedirect = UnixUtils.getRedirectedStdoutTarget();
-        boolean appImage = System.getenv("APPDIR") != null;
 
         nodeInfoMap.put("id", nodeId);
         nodeInfoMap.put("uid", uid);
@@ -774,7 +778,8 @@ public class MainProcess {
                 String jarSHA256Report = JarUtils.createJarSHA256Report(jarPath);
                 Files.writeString(jarSHA256reportPath, jarSHA256Report, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.SYNC);
 
-                String jarSignerReport = JarUtils.createJarSignerReport(jarPath);
+                String jarsignerExecutable = jreDirExists ? jreDir + "/bin/jarsigner" : "jarsigner";
+                String jarSignerReport = JarUtils.createJarSignerReport(jarPath, jarsignerExecutable);
                 Files.writeString(jarSignerReportPath, jarSignerReport, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.SYNC);
 
                 if (jarSignerReport.contains("jar verified.")) {
@@ -784,7 +789,7 @@ public class MainProcess {
                     return;
                 }
             }
-            
+
             GitUtils.runCommit(repoDir, "Pre-start commit");
 
             scheduler.start();
