@@ -235,7 +235,7 @@ public class MainProcess {
 
         String appDir = System.getenv("APPDIR"); // Run within AppImage
         boolean appImage = appDir != null;
-        String jreDir = ISystemProperties.USER_DIR + "/jre";
+        String jreDir = (appImage ? appDir : ISystemProperties.USER_DIR) + "/jre";
         boolean jreDirExists = (Files.isDirectory(Path.of(jreDir)));
 
         MainProcess.noColor = noColor;
