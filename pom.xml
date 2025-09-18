@@ -255,7 +255,7 @@
                 <executions>
                     <execution>
                         <id>wrap-jar</id>
-                        <phase>verify</phase>
+                        <phase>install</phase>
                         <goals>
                             <goal>exec</goal>
                         </goals>

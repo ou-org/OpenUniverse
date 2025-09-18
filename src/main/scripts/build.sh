@@ -7,7 +7,7 @@
 # OpenUniverse Build Script
 # This script builds the OpenUniverse project from source.
 
-export OU_VERSION="1.0.21"
+export OU_VERSION="1.0.22"
 TAG="v$OU_VERSION"
 COMMIT_HASH=$(git rev-parse "$TAG") # If unset or empty use the lattest (⚠️ WARNING! NOT RECOMMENDED IN PRODUCTION!)
 
@@ -65,7 +65,8 @@ fi
 # TEMP WORK DIR
 # -----------------------------
 WORKDIR="$(mktemp -d)"
-echo "Working in $WORKDIR"
+trap 'rm -rf "$WORKDIR"' EXIT INT TERM
+echo "Working in temp dir: $WORKDIR"
 cd "$WORKDIR"
 
 # -----------------------------
@@ -83,7 +84,10 @@ REPO_DIR="$(pwd)"
 # BUILD PROJECT
 # -----------------------------
 echo "Running Maven build..."
-mvn clean verify -e -DskipTests
+if [ -n "$SIGN_JAR_KEYSTORE" ]; then
+  mvn clean package verify install -e -DskipTests
+else
+  mvn clean package verify -e -DskipTests
 
 
 # -----------------------------

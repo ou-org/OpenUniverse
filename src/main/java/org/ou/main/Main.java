@@ -135,6 +135,7 @@ public class Main {
                 handler.setLevel(Level.OFF);
             }
         }
+        System.err.println(createHeader());
 
         if (args.length < 2) {
             printHelp();
@@ -166,7 +167,6 @@ public class Main {
             case "status" ->
                 printStatus = true;
             default -> {
-                System.err.println(createHeader());
                 System.err.println("Unknown command! Only 'help', 'schema', 'targets', 'status', 'start' and 'stop' are supported.");
                 System.exit(-1);
                 return;
@@ -195,7 +195,6 @@ public class Main {
                     case "--assume-yes", "-y" ->
                         assumeYes = true;
                     default -> {
-                        System.err.println(createHeader());
                         System.err.println("Unknown flag or option!");
                         System.exit(-1);
                         return;
@@ -225,12 +224,11 @@ public class Main {
      * @return
      */
     public static String createHeader() {
-        return MANIFEST_IMPLEMENTATION_TITLE + "\nVersion: " + MANIFEST_IMPLEMENTATION_VERSION + "\nJVM version: " + ISystemProperties.JAVA_VERSION + "\nBuild: " + MANIFEST_BUILD_TIME + "\nCommit: " + GIT_COMMIT_ID_FULL + "\nClone: " + REPO_URL;
+        return "\n" + MANIFEST_IMPLEMENTATION_TITLE + "\nVersion: " + MANIFEST_IMPLEMENTATION_VERSION + "\nJVM version: " + ISystemProperties.JAVA_VERSION + "\nBuild: " + MANIFEST_BUILD_TIME + "\nCommit: " + GIT_COMMIT_ID_FULL + "\nClone: " + REPO_URL + "\n";
     }
 
     private static void printHelp() {
         StringBuilder sb = new StringBuilder();
-        sb.append('\n').append(createHeader()).append('\n');
 //      sb.append("01234567890123456789012345678901234567890123456789012345678901234567890123456789\n");
         sb.append("                                                                                \n");
         sb.append("Usage:                                                                          \n");
@@ -295,6 +293,6 @@ public class Main {
         sb.append(" 255               An unknown or invalid command, option or flag was provided.  \n");
         sb.append("                                                                                \n");
 //      sb.append("01234567890123456789012345678901234567890123456789012345678901234567890123456789\n");
-        System.out.println(sb);
+        System.err.println(sb);
     }
 }

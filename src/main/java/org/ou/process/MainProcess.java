@@ -768,8 +768,6 @@ public class MainProcess {
             }
 
             System.err.println();
-            System.err.println();
-            System.err.println(Main.createHeader());
             System.err.println(SEPARATOR_80_WITH_COLOR_SUPPORT);
             System.err.println();
 
