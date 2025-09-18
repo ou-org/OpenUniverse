@@ -232,7 +232,7 @@
                 <executions>
                     <execution>
                         <id>sign-jar</id>
-                        <phase>verify</phase>
+                        <phase>varify</phase>
                         <goals>
                             <goal>sign</goal>
                         </goals>
@@ -255,7 +255,7 @@
                 <executions>
                     <execution>
                         <id>wrap-jar</id>
-                        <phase>install</phase>
+                        <phase>verify</phase>
                         <goals>
                             <goal>exec</goal>
                         </goals>

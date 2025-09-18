@@ -84,11 +84,7 @@ REPO_DIR="$(pwd)"
 # BUILD PROJECT
 # -----------------------------
 echo "Running Maven build..."
-if [ -n "$SIGN_JAR_KEYSTORE" ]; then
-  mvn clean package verify install -e -DskipTests
-else
-  mvn clean package verify -e -DskipTests
-
+mvn clean verify -e -DskipTests
 
 # -----------------------------
 # APP IMAGE SETUP
