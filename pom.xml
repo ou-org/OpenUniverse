@@ -232,7 +232,7 @@
                 <executions>
                     <execution>
                         <id>sign-jar</id>
-                        <phase>varify</phase>
+                        <phase>verify</phase>
                         <goals>
                             <goal>sign</goal>
                         </goals>

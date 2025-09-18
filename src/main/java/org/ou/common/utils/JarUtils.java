@@ -76,8 +76,8 @@ public class JarUtils {
 
             if (pathStr.endsWith("/")) {
                 return null; // Running from IDE or classes, not a JAR
-
-                        }return Path.of(pathStr);
+            }
+            return Path.of(pathStr);
         } catch (Exception e) {
             e.printStackTrace();
             return null; // fallback if something went wrong

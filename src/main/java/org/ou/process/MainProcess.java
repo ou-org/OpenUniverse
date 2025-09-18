@@ -777,6 +777,7 @@ public class MainProcess {
                 Files.writeString(jarSHA256reportPath, jarSHA256Report, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.SYNC);
 
                 String jarsignerExecutable = jreDirExists ? jreDir + "/bin/jarsigner" : "jarsigner";
+                System.err.println("jarsigner: %s".formatted(jarsignerExecutable));
                 String jarSignerReport = JarUtils.createJarSignerReport(jarPath, jarsignerExecutable);
                 Files.writeString(jarSignerReportPath, jarSignerReport, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.SYNC);
 
