@@ -65,7 +65,7 @@ fi
 # TEMP WORK DIR
 # -----------------------------
 WORKDIR="$(mktemp -d)"
-#trap 'rm -rf "$WORKDIR"' EXIT INT TERM
+# trap 'rm -rf "$WORKDIR"' EXIT INT TERM
 echo "Working in temp dir: $WORKDIR"
 cd "$WORKDIR"
 
