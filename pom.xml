@@ -238,7 +238,7 @@
                         <id>sign-jar</id>
                         <phase>verify</phase>
                         <goals>
-                            <goal>ZZZsign</goal>
+                            <goal>sign</goal>
                         </goals>
                     </execution>
                 </executions>
