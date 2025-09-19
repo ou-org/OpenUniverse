@@ -9,7 +9,7 @@
 
 export OU_VERSION="1.0.22"
 TAG="v$OU_VERSION"
-COMMIT_HASH=$(git rev-parse "$TAG") # If unset or empty use the lattest (⚠️ WARNING! NOT RECOMMENDED IN PRODUCTION!)
+#COMMIT_HASH=$(git rev-parse "$TAG") # If unset or empty use the lattest (⚠️ WARNING! NOT RECOMMENDED IN PRODUCTION!)
 
 # -----------------------------
 # URLs
@@ -65,7 +65,7 @@ fi
 # TEMP WORK DIR
 # -----------------------------
 WORKDIR="$(mktemp -d)"
-trap 'rm -rf "$WORKDIR"' EXIT INT TERM
+#trap 'rm -rf "$WORKDIR"' EXIT INT TERM
 echo "Working in temp dir: $WORKDIR"
 cd "$WORKDIR"
 
