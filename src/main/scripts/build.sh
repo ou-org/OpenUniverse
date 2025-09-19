@@ -62,22 +62,22 @@ fi
 # TEMP WORK DIR
 # -----------------------------
 WORKDIR="$(mktemp -d)"
-# trap 'rm -rf "$WORKDIR"' EXIT INT TERM
+trap 'rm -rf "$WORKDIR"' EXIT INT TERM
 echo "Working in temp dir: $WORKDIR"
 cd "$WORKDIR"
-
-TAG="v$OU_VERSION"
-COMMIT_HASH=$(git rev-parse "$TAG") # If unset or empty use the lattest (⚠️ WARNING! NOT RECOMMENDED IN PRODUCTION!)
 
 # -----------------------------
 # CLONE REPO
 # -----------------------------
 git clone "$REPO_URL" repo
 cd repo
-if [ -n "$COMMIT_HASH" ]; then
-  echo "Checking out commit $COMMIT_HASH"
-  git checkout "$COMMIT_HASH"
-fi
+
+TAG="v$OU_VERSION"
+COMMIT_HASH=$(git rev-parse "$TAG")
+
+echo "Checking out commit $COMMIT_HASH"
+git checkout "$COMMIT_HASH"
+
 REPO_DIR="$(pwd)"
 
 # -----------------------------
