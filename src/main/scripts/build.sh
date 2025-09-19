@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
 
 ######################################################
 # OpenUnvierse — The UaC (Universe as Code) platform #
@@ -8,8 +8,11 @@
 # This script builds the OpenUniverse project from source.
 
 export OU_VERSION="1.0.22"
-TAG="v$OU_VERSION"
-COMMIT_HASH=$(git rev-parse "$TAG") # If unset or empty use the lattest (⚠️ WARNING! NOT RECOMMENDED IN PRODUCTION!)
+
+set -e
+set -a
+. ./build.properties
+set +a
 
 # -----------------------------
 # URLs
@@ -18,12 +21,6 @@ REPO_URL="https://github.com/ou-org/OpenUniverse.git"
 JDK_TAR_DOWNLOAD_URL="https://download.oracle.com/java/24/latest/jdk-24_linux-x64_bin.tar.gz"
 APP_IMAGE_TOOL_DOWNLOAD_URL="https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage"
 RUNTIME_x86_64_DOWNLOAD_URL="https://github.com/AppImage/type2-runtime/releases/download/continuous/runtime-x86_64"
-
-
-set -e
-set -a
-. ./build.properties
-set +a
 
 # -----------------------------
 # DIRS
@@ -68,6 +65,9 @@ WORKDIR="$(mktemp -d)"
 # trap 'rm -rf "$WORKDIR"' EXIT INT TERM
 echo "Working in temp dir: $WORKDIR"
 cd "$WORKDIR"
+
+TAG="v$OU_VERSION"
+COMMIT_HASH=$(git rev-parse "$TAG") # If unset or empty use the lattest (⚠️ WARNING! NOT RECOMMENDED IN PRODUCTION!)
 
 # -----------------------------
 # CLONE REPO
