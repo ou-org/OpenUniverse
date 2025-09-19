@@ -25,10 +25,7 @@ RUNTIME_x86_64_DOWNLOAD_URL="https://github.com/AppImage/type2-runtime/releases/
 # -----------------------------
 # DIRS
 # -----------------------------
-OUT_DIR="$HOME/ou-${OU_VERSION}"
 CACHE_DIR="$HOME/.cache/build-tools"
-
-mkdir -p "$OUT_DIR"
 mkdir -p "$CACHE_DIR"
 
 # -----------------------------
@@ -139,6 +136,10 @@ if [ -z "${YOUR_40_CHARACTER_HEX_FINGERPRINT:-}" ]; then
 else
     ARCH=x86_64 "$APP_IMAGE_TOOL" "$APP_DIR" "$REPO_DIR/target/ou-linux-x86_64" --runtime-file "$RUNTIME" --sign --sign-key "$YOUR_40_CHARACTER_HEX_FINGERPRINT"
 fi
+
+OUT_DIR="$HOME/ou-${OU_VERSION}"
+rm -rf "$OUT_DIR"
+mkdir -p "$OUT_DIR"
 
 cp "$REPO_DIR/target/ou-$OU_VERSION.jar" "$OUT_DIR"
 cp "$REPO_DIR/target/ou" "$OUT_DIR"
