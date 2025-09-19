@@ -27,7 +27,10 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.ou</groupId>
     <artifactId>ou</artifactId>
-    <version>${env.OU_VERSION}</version>
+    <version>${revision}</version>
+    <name>OpenUniverse</name>
+    <url>https://github.com/ou-org/OpenUniverse</url>
+    <description>OpenUnvierse — The UaC (Universe as Code) platform</description>
     <packaging>jar</packaging>
     <!-- License Information -->
     <licenses>
@@ -38,6 +41,7 @@
         </license>
     </licenses>
     <properties>
+        <revision>${env.OU_VERSION}</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
@@ -246,6 +250,8 @@
                     <storepass>${env.SIGN_JAR_STOREPASS}</storepass>
                     <keypass>${env.SIGN_JAR_KEYPASS}</keypass>
                     <tsa>${env.SIGN_JAR_TSA}</tsa>
+                    <verbose>true</verbose>
+                    <verify>true</verify>
                 </configuration>
             </plugin>
             <plugin>
