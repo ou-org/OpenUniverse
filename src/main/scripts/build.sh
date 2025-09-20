@@ -153,7 +153,13 @@ else
     ARCH=x86_64 "$APP_IMAGE_TOOL" "$APP_DIR" "$REPO_DIR/target/ou-linux-x86_64" --runtime-file "$RUNTIME" --sign --sign-key "$YOUR_40_CHARACTER_HEX_FINGERPRINT"
 fi
 
-OUT_DIR="$HOME/ou-${OU_VERSION}"
+# First param is output dir
+if [ -n "$1" ]; then
+  OUT_DIR="$1"
+else
+  OUT_DIR="$HOME/ou-${OU_VERSION}"
+fi
+
 rm -rf "$OUT_DIR"
 mkdir -p "$OUT_DIR"
 
