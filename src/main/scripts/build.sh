@@ -155,7 +155,7 @@ fi
 
 # First param is output dir
 if [ -n "$2" ]; then
-  OUT_DIR="$1"
+  OUT_DIR="$2"
 else
   OUT_DIR="$HOME/ou-${OU_VERSION}"
 fi

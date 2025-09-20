@@ -5,9 +5,9 @@ OU_VERSION="1.0.22"
 TAG="v${OU_VERSION}"
 
 # GitHub raw content URL for OpenUniverse repository
-RAW_URL="https://raw.githubusercontent.com/ou-org/OpenUniverse/refs/heads/master"
+RAW_URL="https://raw.githubusercontent.com/ou-org/OpenUniverse/${TAG}"
 
-RELEASE_DOWNLOAD_URL="https://github.com/ou-org/OpenUniverse/releases/download/$TAG"
+#RELEASE_DOWNLOAD_URL="https://github.com/ou-org/OpenUniverse/releases/download/${TAG}"
 
 
 # -----------------------------
@@ -48,7 +48,7 @@ sh "$KEYSTORE_SCRIPT"
 
 # Download and run OpenUniverse build script
 echo "Downloading and running OpenUniverse build script..."
-BUILD_SCRIPT_URL="$RELEASE_DOWNLOAD_URL/build.sh"
+BUILD_SCRIPT_URL="$RAW_URL/src/main/scripts/build.sh"
 BUILD_SCRIPT="$BASE_DIR/$(basename $BUILD_SCRIPT_URL)"
 curl -L -o "$BUILD_SCRIPT" "$BUILD_SCRIPT_URL"
 chmod +x "$BUILD_SCRIPT"
