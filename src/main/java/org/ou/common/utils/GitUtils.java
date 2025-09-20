@@ -195,11 +195,11 @@ public class GitUtils {
         }
     }
 
-    public static void runCommit(String repoDir, String commitMessage) throws Exception {
+    public static void runCommit(String repoDir, String commitMessage, boolean gpgSignEnabled) throws Exception {
         String[] command = {
             "sh", "-c",
-            "cd \"" + repoDir + "\" && git add . && git commit -S -m \"" 
-                + commitMessage.replace("\"", "\\\"") + "\""
+            "cd \"" + repoDir + "\" && git add . && git commit" + (gpgSignEnabled ? " -S" : "") + " -m \""
+            + commitMessage.replace("\"", "\\\"") + "\""
         };
 
         ProcessBuilder pb = new ProcessBuilder(command);

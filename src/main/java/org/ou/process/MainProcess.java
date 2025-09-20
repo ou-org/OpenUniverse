@@ -339,6 +339,8 @@ public class MainProcess {
 
         git = Git.open(repoPath.toFile());
         Repository repository = git.getRepository();
+        boolean gpgSignEnabled = repository.getConfig().getBoolean("commit", null, "gpgsign", false);
+
         boolean cleanRepo = git.status().call().isClean();
 
         if (printStatus) {
@@ -521,7 +523,7 @@ public class MainProcess {
                             FileUtils.deleteDir(tmpSolrHomeDir);
                             FileUtils.deleteDir(tmpRepoDir);
 
-                            GitUtils.runCommit(repoDir, "Pre-shutdown commit");
+                            GitUtils.runCommit(repoDir, "Pre-shutdown commit", gpgSignEnabled);
 
                             System.err.println();
                             System.err.println("*** Shutdown completed ***");
@@ -789,7 +791,7 @@ public class MainProcess {
                 }
             }
 
-            GitUtils.runCommit(repoDir, "Pre-start commit");
+            GitUtils.runCommit(repoDir, "Pre-start commit", gpgSignEnabled);
 
             scheduler.start();
 
