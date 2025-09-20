@@ -31,7 +31,11 @@ public class TerminalUtils {
         }
         System.err.print(prompt);
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
-        String answer = reader.readLine().strip().toLowerCase(Locale.ENGLISH);
+        String answer = reader.readLine();
+        if (answer == null) {
+            return false;
+        }
+        answer = answer.strip().toLowerCase(Locale.ENGLISH);
         if (answer.equals("y") || answer.equals("yes")) {
             return true;
         }
