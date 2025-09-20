@@ -246,12 +246,10 @@
                     <archive>${project.build.directory}/${project.build.finalName}.jar</archive>
                     <keystore>${env.SIGN_JAR_KEYSTORE}</keystore>
                     <storetype>${env.SIGN_JAR_STORETYPE}</storetype>
-                    <alias>${env.SIGN_JAR_ALIAS}</alias>
                     <storepass>${env.SIGN_JAR_STOREPASS}</storepass>
+                    <alias>${env.SIGN_JAR_ALIAS}</alias>
                     <keypass>${env.SIGN_JAR_KEYPASS}</keypass>
                     <tsa>${env.SIGN_JAR_TSA}</tsa>
-                    <verbose>true</verbose>
-                    <verify>true</verify>
                 </configuration>
             </plugin>
             <plugin>

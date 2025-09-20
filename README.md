@@ -97,6 +97,87 @@ intelligently.
 </ul>
 </p>
 
+## Why OpenUniverse Releases Are Source-Only
+
+OpenUniverse is distributed as **source code + build tooling**, not as
+precompiled binaries.\
+This is an intentional design decision, and here’s why:
+
+### 1. Security & Trust
+
+Releasing only source means that you, the user, are in full control of the build
+process.
+
+- You can inspect the code you’re running.
+- You compile it yourself, so you don’t need to trust an opaque binary artifact.
+- Sensitive build parameters (e.g. your **keystore for JAR signing**) stay on
+  your machine — they are never bundled or exposed in a public binary.
+
+### 2. Customization
+
+OpenUniverse is designed to be an **Infrastructure-as-Code platform**, which
+often needs to be adapted to different environments:
+
+- Different Linux distributions
+- Custom runtime integrations
+- Organization-specific signing keys, certificates, or packaging rules
+
+A single prebuilt binary would either be too rigid or require shipping dozens of
+variants.\
+Instead, our **build script (`build.sh`) + properties file
+(`build.properties`)** gives you a reproducible, customizable build pipeline.
+
+### 3. Reproducibility
+
+By shipping only the source:
+
+- You always know _how_ the software was built.
+- Builds are **deterministic**: two people running the same script get the same
+  output (aside from user-specific signing).
+- This aligns with modern reproducible-builds practices in open source.
+
+### 4. Lightweight Releases
+
+Instead of hosting large binary artifacts, releases are minimal:
+
+- The `build.sh` script orchestrates everything.
+- Dependencies (like JDK, Maven) are standard and easy to install.
+- You only download what you need.
+
+### 5. Developer Empowerment
+
+OpenUniverse is meant for developers, operators, and infrastructure teams.
+By keeping the release **source-first**, we encourage exploration, contribution,
+and understanding of the platform rather than black-box usage.
+
+---
+
+`build.properties`
+
+```properties
+########################################################
+# OpenUnvierse configuration properties file (Example) #
+########################################################
+
+# -----------------------------
+# JAR SIGNING CONFIG
+# -----------------------------
+
+SIGN_JAR_KEYSTORE="$HOME/keystore.p12"
+SIGN_JAR_STORETYPE="PKCS12"
+SIGN_JAR_ALIAS="signing_alias"
+SIGN_JAR_KEYPASS="your_password"
+SIGN_JAR_STOREPASS="your_password"
+SIGN_JAR_TSA="http://timestamp.digicert.com"
+
+# -----------------------------
+# APP IMAGE SIGNING CONFIG
+# -----------------------------
+
+# If unset or empty, generate unsigned AppImage (⚠️ WARNING! NOT RECOMMENDED IN PRODUCTION!)
+YOUR_40_CHARACTER_HEX_FINGERPRINT="86A32BE7AB448F546095841B16F66731F8F57B73"
+```
+
 ## Getting Started
 
 #### 1. Download OpenUniverse binary:
@@ -147,6 +228,7 @@ Open your browser and go to:
 
 - [Hello, Universe!](doc/examples/HelloUniverse.md)
 - [Check File Size](doc/examples/CheckFileSize.md)
+
 <!--
 - [Document Validator](doc/examples/document-validator.json)
 - [Hello Solr](doc/examples/hello-solr.json)
