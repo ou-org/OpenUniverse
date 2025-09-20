@@ -27,7 +27,7 @@ export OU_VERSION="1.0.22"
 
 set -e
 set -a
-. ./build.properties
+. "$1"  # load properties from first param
 set +a
 
 # -----------------------------
@@ -154,7 +154,7 @@ else
 fi
 
 # First param is output dir
-if [ -n "$1" ]; then
+if [ -n "$2" ]; then
   OUT_DIR="$1"
 else
   OUT_DIR="$HOME/ou-${OU_VERSION}"
