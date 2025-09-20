@@ -49,7 +49,7 @@ sh "$KEYSTORE_SCRIPT"
 # Download and run OpenUniverse build script
 echo "Downloading and running OpenUniverse build script..."
 BUILD_SCRIPT_URL="$RELEASE_DOWNLOAD_URL/build.sh"
-BUILD_SCRIPT="$BASE_DIR/$(basename $RELEASE_DOWNLOAD_URL)"
+BUILD_SCRIPT="$BASE_DIR/$(basename $BUILD_SCRIPT_URL)"
 curl -L -o "$BUILD_SCRIPT" "$BUILD_SCRIPT_URL"
 chmod +x "$BUILD_SCRIPT"
 
