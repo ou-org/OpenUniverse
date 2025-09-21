@@ -97,15 +97,15 @@ intelligently.
 </ul>
 </p>
 
----
-
 ## Getting Started: "Hello, Universe!"
 
-#### 1. Create and Start the Universe:
+#### 1. Start the Universe:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ou-org/OpenUniverse/v1.0.22/src/main/scripts/hello.sh | sh -s -- 1.0.22
 ```
+> [!NOTE]
+> This will take a few Earth minutes.
 
 #### 2. Hear the Universe!
 
@@ -117,62 +117,9 @@ Open your browser and go to:
 > Read more about **Hello, Universe!** example
 > [here](https://github.com/ou-org/OpenUniverse/blob/master/doc/examples/HelloUniverse.md).
 
----
-
 ## Why OpenUniverse Releases Are Source-Only
 
-OpenUniverse is distributed as **source code + build tooling**, not as
-precompiled binaries.\
-This is an intentional design decision, and here’s why:
-
-### 1. Security & Trust
-
-Releasing only source means that you, the user, are in full control of the build
-process.
-
-- You can inspect the code you’re running.
-- You compile it yourself, so you don’t need to trust an opaque binary artifact.
-- Sensitive build parameters (e.g. your **keystore for JAR signing**) stay on
-  your machine — they are never bundled or exposed in a public binary.
-
-### 2. Customization
-
-OpenUniverse is designed to be an **Infrastructure-as-Code platform**, which
-often needs to be adapted to different environments:
-
-- Different Linux distributions
-- Custom runtime integrations
-- Organization-specific signing keys, certificates, or packaging rules
-
-A single prebuilt binary would either be too rigid or require shipping dozens of
-variants.\
-Instead, our **build script (`build.sh`) + properties file
-(`build.properties`)** gives you a reproducible, customizable build pipeline.
-
-### 3. Reproducibility
-
-By shipping only the source:
-
-- You always know _how_ the software was built.
-- Builds are **deterministic**: two people running the same script get the same
-  output (aside from user-specific signing).
-- This aligns with modern reproducible-builds practices in open source.
-
-### 4. Lightweight Releases
-
-Instead of hosting large binary artifacts, releases are minimal:
-
-- The `build.sh` script orchestrates everything.
-- Dependencies (like JDK, Maven) are standard and easy to install.
-- You only download what you need.
-
-### 5. Developer Empowerment
-
-OpenUniverse is meant for developers, operators, and infrastructure teams.
-By keeping the release **source-first**, we encourage exploration, contribution,
-and understanding of the platform rather than black-box usage.
-
----
+OpenUniverse is distributed as **source code + build tooling**, not as precompiled binaries, by design. This approach gives you full control of the build process: you can inspect the code you’re running, compile it yourself without relying on opaque binaries, and keep sensitive build parameters (like your **keystore for JAR signing**) private. It also enables customization for different environments—Linux distributions, runtime integrations, or organization-specific signing keys and packaging rules—without shipping dozens of binary variants. Using the provided `build.sh` script and `build.properties` file ensures reproducible, deterministic builds so that anyone following the same steps gets identical results (aside from user-specific signing), aligning with modern open-source reproducible-build practices. Additionally, source-only releases are lightweight, requiring only standard dependencies such as JDK and Maven, and empower developers, operators, and infrastructure teams to explore, understand, and contribute to the platform rather than using it as a black box.
 
 ## Build Official Production-ready Binaries
 
