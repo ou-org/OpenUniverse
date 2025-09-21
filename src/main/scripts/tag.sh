@@ -9,7 +9,7 @@
 set -e
 
 OU_VERSION="1.0.22"
-TAG="v$OU_VERSION"
+TAG="v${OU_VERSION}"
 
 # Delete local tag if exists
 git tag -d "$TAG" 2>/dev/null || true

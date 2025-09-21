@@ -97,6 +97,28 @@ intelligently.
 </ul>
 </p>
 
+---
+
+## Getting Started: "Hello, Universe!"
+
+#### 1. Create and Start the Universe:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/ou-org/OpenUniverse/v1.0.22/src/main/scripts/hello.sh | sh -s -- 1.0.22
+```
+
+#### 2. Hear the Universe!
+
+Open your browser and go to:
+
+[http://localhost:8080/events](http://localhost:8080/events)
+
+> [!NOTE]
+> Read more about **Hello, Universe!** example
+> [here](https://github.com/ou-org/OpenUniverse/blob/master/doc/examples/HelloUniverse.md).
+
+---
+
 ## Why OpenUniverse Releases Are Source-Only
 
 OpenUniverse is distributed as **source code + build tooling**, not as
@@ -152,29 +174,11 @@ and understanding of the platform rather than black-box usage.
 
 ---
 
-## Getting Started
-
-#### 1. Download, Build and Run "Hello, Universe!" Example:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/ou-org/OpenUniverse/v1.0.22/src/main/scripts/hello.sh | sh -s -- 1.0.22
-```
-
-#### 2. Hear the Universe!
-
-Open your browser and go to:
-
-[http://localhost:8080/events](http://localhost:8080/events)
-
-> [!NOTE]
-> Read more about HelloUniverse example
-> [here](https://github.com/ou-org/OpenUniverse/blob/master/doc/examples/HelloUniverse.md).
-
-## Build Production-ready Binaries
+## Build Official Production-ready Binaries
 
 #### 1. Prepare Your Properties File:
 
-`build.properties`
+`build.properties` (Example)
 
 ```properties
 ##########################################################
@@ -242,10 +246,10 @@ SIGN_JAR_TSA="http://timestamp.digicert.com"
 YOUR_40_CHARACTER_HEX_FINGERPRINT="86A32BE7AB448F546095841B16F66731F8F57B73"
 ```
 
-#### 2. Download and Build OpenUniverse Binaries:
+#### 2. Build Binaries:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/ou-org/OpenUniverse/v${OPEN_UNIVERSE_VERSION}/src/main/scripts/build.sh | sh -s -- ${OPEN_UNIVERSE_VERSION} ${YOUR_BUILD_PROPERTIES_FILE} ${YOUR_OUTPUT_DIR}
+curl -fsSL https://raw.githubusercontent.com/ou-org/OpenUniverse/v${OPEN_UNIVERSE_VERSION}/src/main/scripts/build.sh | sh -s -- ${OPEN_UNIVERSE_VERSION} ${YOUR_BUILD_PROPERTIES_FILE} ${OUTPUT_DIR}
 ```
 
 ## Documentation
