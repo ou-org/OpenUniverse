@@ -23,11 +23,17 @@
 
 # OpenUniverse Build Script
 
-export OU_VERSION="1.0.22"
+export OU_VERSION="$1"
+
+if [ -n "$2" ]; then
+  PROPERTIES_FILE="$2"
+else
+  PROPERTIES_FILE="$HOME/.ou-build/build.properties"
+fi
 
 set -e
 set -a
-. "$1"  # load properties from first param
+. "$PROPERTIES_FILE"
 set +a
 
 # -----------------------------
@@ -153,9 +159,8 @@ else
     ARCH=x86_64 "$APP_IMAGE_TOOL" "$APP_DIR" "$REPO_DIR/target/ou-linux-x86_64" --runtime-file "$RUNTIME" --sign --sign-key "$YOUR_40_CHARACTER_HEX_FINGERPRINT"
 fi
 
-# First param is output dir
-if [ -n "$2" ]; then
-  OUT_DIR="$2"
+if [ -n "$3" ]; then
+  OUT_DIR="$3"
 else
   OUT_DIR="$HOME/ou-${OU_VERSION}"
 fi

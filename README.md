@@ -180,23 +180,13 @@ YOUR_40_CHARACTER_HEX_FINGERPRINT="86A32BE7AB448F546095841B16F66731F8F57B73"
 
 ## Getting Started
 
-#### 1. Download OpenUniverse binary:
+#### 1. Download, Build and Run "Hello, Universe!" Example:
 
-[https://github.com/ou-org/OpenUniverse/releases/download/v1.0.21/ou-linux-x86_64](https://github.com/ou-org/OpenUniverse/releases/download/v1.0.21/ou-linux-x86_64)
-
-#### 2. Download "Hello, Universe!" example:
-
-Download and extract archive with ready to use sample repository:
-
-[https://github.com/ou-org/OpenUniverse/releases/download/v1.0.21/HelloUniverse.zip](https://github.com/ou-org/OpenUniverse/releases/download/v1.0.21/HelloUniverse.zip)
-
-#### 3. Strart Your Universe:
-
-```sh
-ou /path/to/your/folder/HelloUniverseRepo start --stdout --assume-yes
+```bash
+curl -fsSL https://raw.githubusercontent.com/ou-org/OpenUniverse/v1.0.22/src/main/scripts/hello.sh | sh -s -- 1.0.22
 ```
 
-#### 4. Hear the Universe!
+#### 2. Hear the Universe!
 
 Open your browser and go to:
 
@@ -205,6 +195,84 @@ Open your browser and go to:
 > [!NOTE]
 > Read more about HelloUniverse example
 > [here](https://github.com/ou-org/OpenUniverse/blob/master/doc/examples/HelloUniverse.md).
+
+## Build Production-ready Binaries
+
+#### 1. Prepare Your Properties File:
+
+`build.properties`
+
+```properties
+#########################################
+# ⚠️ WARNING! NOT FOR PRODUCTION USAGE! #
+#########################################
+
+# OpenUnvierse configuration properties file (Example)
+
+# Copy this file to build.properties and adjust the values as needed.
+# This file is used by build.sh
+
+# -----------------------------
+# JAR SIGNING CONFIG
+# -----------------------------
+
+# Keystore related parameters
+#
+# For simplicity, we use the same values here as in
+# create-keystore.sh (the quick-and-dirty keystore
+# generation script).
+# Adjust these as needed.
+
+# You can also use a different keystore
+# type (e.g., JKS) if you prefer.
+
+# Tip: Create the quick-and-dirty keystore with:
+# ./create-keystore.sh
+
+# ⚠️ Make sure to keep your keystore and passwords secure!
+# ⚠️ Never commit your keystore or passwords to version control!
+
+# In this example, we use an absolute path in the user's home directory.
+# Make sure the path is correct for your environment.
+
+# Also, ensure that the keystore file is accessible during the build process.
+# You can create the keystore in a secure location and reference it here.
+
+# Example values (replace with your actual values):
+
+SIGN_JAR_KEYSTORE="$HOME/MyQuickAndDirtyKeystore/keystore.p12"
+SIGN_JAR_STORETYPE="PKCS12"
+SIGN_JAR_STOREPASS="your_password"
+SIGN_JAR_ALIAS="signing_alias"
+SIGN_JAR_KEYPASS="your_password"
+
+# Timestamping Authority URL
+# https://www.ietf.org/rfc/rfc3161.txt - RFC 3161 Time-Stamp Protocol (TSP)
+# (You can use another TSA if you prefer)
+SIGN_JAR_TSA="http://timestamp.digicert.com"
+
+# -----------------------------
+# APP IMAGE SIGNING CONFIG
+# -----------------------------
+
+# Generate a secure GPG key pair using the following command:
+# gpg --batch --passphrase 'YOUR_STRONG_PASSWORD' --pinentry-mode loopback --gen-key <(echo -e 'Key-Type: RSA\nKey-Length: 4096\nSubkey-Type: RSA\nSubkey-Length: 4096\nName-Real: YourName\nName-Email: your-mail@example.com\nExpire-Date: 0\n%commit')
+#
+# ⚠️ Replace `'YOUR_STRONG_PASSWORD'` with a secure passphrase.<br>
+# ⚠️ Replace `YourName` with your name.<br>
+# ⚠️ Replace `your-mail@example.com` with your email address.
+#
+# List Your Secret Keys
+# gpg --list-secret-keys
+
+#YOUR_40_CHARACTER_HEX_FINGERPRINT="86A32BE7AB448F546095841B16F66731F8F57B73" # If unset or empty, generate unsigned AppImage (⚠️ WARNING! NOT RECOMMENDED IN PRODUCTION!)
+```
+
+#### 2. Download and Build OpenUniverse Binaries:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/ou-org/OpenUniverse/v${OPEN_UNIVERSE_VERSION}/src/main/scripts/build.sh | sh -s -- ${OPEN_UNIVERSE_VERSION} ${YOUR_BUILD_PROPERTIES_FILE} ${YOUR_OUTPUT_DIR}
+```
 
 ## Documentation
 
