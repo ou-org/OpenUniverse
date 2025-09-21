@@ -177,9 +177,9 @@ Open your browser and go to:
 `build.properties`
 
 ```properties
-#########################################
-# ⚠️ WARNING! NOT FOR PRODUCTION USAGE! #
-#########################################
+##########################################################
+# ⚠️ WARNING! CHANGE PARAMETERS BEFORE PRODUCTION USAGE! #
+##########################################################
 
 # OpenUnvierse configuration properties file (Example)
 
@@ -200,8 +200,8 @@ Open your browser and go to:
 # You can also use a different keystore
 # type (e.g., JKS) if you prefer.
 
-# Tip: Create the quick-and-dirty keystore with:
-# ./create-keystore.sh
+# Tip: Create the QaD (quick-and-dirty) keystore with:
+# https://raw.githubusercontent.com/ou-org/OpenUniverse/refs/heads/master/src/main/scripts/create-qad-keystore.sh
 
 # ⚠️ Make sure to keep your keystore and passwords secure!
 # ⚠️ Never commit your keystore or passwords to version control!
@@ -222,7 +222,6 @@ SIGN_JAR_KEYPASS="your_password"
 
 # Timestamping Authority URL
 # https://www.ietf.org/rfc/rfc3161.txt - RFC 3161 Time-Stamp Protocol (TSP)
-# (You can use another TSA if you prefer)
 SIGN_JAR_TSA="http://timestamp.digicert.com"
 
 # -----------------------------
@@ -239,7 +238,8 @@ SIGN_JAR_TSA="http://timestamp.digicert.com"
 # List Your Secret Keys
 # gpg --list-secret-keys
 
-YOUR_40_CHARACTER_HEX_FINGERPRINT="86A32BE7AB448F546095841B16F66731F8F57B73" # If unset or empty, generate unsigned AppImage (⚠️ WARNING! NOT RECOMMENDED IN PRODUCTION!)
+# If unset or empty, generate unsigned AppImage (⚠️ WARNING! NOT RECOMMENDED IN PRODUCTION!)
+YOUR_40_CHARACTER_HEX_FINGERPRINT="86A32BE7AB448F546095841B16F66731F8F57B73"
 ```
 
 #### 2. Download and Build OpenUniverse Binaries:

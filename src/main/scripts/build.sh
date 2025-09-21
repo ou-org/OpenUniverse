@@ -91,7 +91,7 @@ cd "$WORKDIR"
 git clone "$REPO_URL" repo
 cd repo
 
-TAG="v$OU_VERSION"
+TAG="v${OU_VERSION}"
 COMMIT_HASH=$(git rev-parse "$TAG")
 
 echo "Checking out commit $COMMIT_HASH"

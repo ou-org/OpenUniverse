@@ -39,8 +39,8 @@ else
 fi
 
 # Build sample keystore
-echo "Creating sample keystore..."
-KEYSTORE_SCRIPT_URL="$RAW_URL/src/main/scripts/create-keystore.sh"
+echo "Creating sample QaD (quick-and-dirty) keystore..."
+KEYSTORE_SCRIPT_URL="$RAW_URL/src/main/scripts/create-qad-keystore.sh"
 KEYSTORE_SCRIPT="$BASE_DIR/$(basename $KEYSTORE_SCRIPT_URL)"
 curl -L -o "$KEYSTORE_SCRIPT" "$KEYSTORE_SCRIPT_URL"
 chmod +x "$KEYSTORE_SCRIPT"
