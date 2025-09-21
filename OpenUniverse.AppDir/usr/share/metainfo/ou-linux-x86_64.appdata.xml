@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+	<id>ou-linux-x86_64</id>
+	<metadata_license>CC0-1.0</metadata_license>
+	<project_license>MIT</project_license>
+	<name>OpenUniverse</name>
+	<summary>OpenUnvierse - The UaC (Universe as Code) platform</summary>
+	<description>
+		<p>OpenUniverse is an ultralight, security-first open source UaC (Universe as Code) platform that unifies your environment.</p>
+	</description>
+	<launchable type="desktop-id">ou-linux-x86_64.desktop</launchable>
+	<url type="homepage">https://ou-org.github.io</url>
+	<screenshots>
+		<screenshot type="default">
+			<image></image>
+		</screenshot>
+	</screenshots>
+	<provides>
+		<id>ou-linux-x86_64.desktop</id>
+	</provides>
+</component>
