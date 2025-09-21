@@ -152,32 +152,6 @@ and understanding of the platform rather than black-box usage.
 
 ---
 
-`build.properties`
-
-```properties
-########################################################
-# OpenUnvierse configuration properties file (Example) #
-########################################################
-
-# -----------------------------
-# JAR SIGNING CONFIG
-# -----------------------------
-
-SIGN_JAR_KEYSTORE="$HOME/keystore.p12"
-SIGN_JAR_STORETYPE="PKCS12"
-SIGN_JAR_ALIAS="signing_alias"
-SIGN_JAR_KEYPASS="your_password"
-SIGN_JAR_STOREPASS="your_password"
-SIGN_JAR_TSA="http://timestamp.digicert.com"
-
-# -----------------------------
-# APP IMAGE SIGNING CONFIG
-# -----------------------------
-
-# If unset or empty, generate unsigned AppImage (⚠️ WARNING! NOT RECOMMENDED IN PRODUCTION!)
-YOUR_40_CHARACTER_HEX_FINGERPRINT="86A32BE7AB448F546095841B16F66731F8F57B73"
-```
-
 ## Getting Started
 
 #### 1. Download, Build and Run "Hello, Universe!" Example:
@@ -265,7 +239,7 @@ SIGN_JAR_TSA="http://timestamp.digicert.com"
 # List Your Secret Keys
 # gpg --list-secret-keys
 
-#YOUR_40_CHARACTER_HEX_FINGERPRINT="86A32BE7AB448F546095841B16F66731F8F57B73" # If unset or empty, generate unsigned AppImage (⚠️ WARNING! NOT RECOMMENDED IN PRODUCTION!)
+YOUR_40_CHARACTER_HEX_FINGERPRINT="86A32BE7AB448F546095841B16F66731F8F57B73" # If unset or empty, generate unsigned AppImage (⚠️ WARNING! NOT RECOMMENDED IN PRODUCTION!)
 ```
 
 #### 2. Download and Build OpenUniverse Binaries:
