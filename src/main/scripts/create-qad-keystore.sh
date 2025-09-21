@@ -16,7 +16,7 @@ set -e
 # In this example, we use an absolute path in the user's home directory.
 # Make sure the path is correct for your environment.
 
-OUTDIR="$HOME/MyQuickAndDirtyKeystore"
+OUTDIR="$1"
 mkdir -p "$OUTDIR"
 
 # Keystore related parameters

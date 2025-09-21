@@ -14,7 +14,7 @@ RAW_URL="https://raw.githubusercontent.com/ou-org/OpenUniverse/${TAG}"
 # TEMP WORK DIR
 # -----------------------------
 
-BASE_DIR="$HOME/OpenUniverseDemo"
+BASE_DIR="$HOME/HelloUniverse"
 mkdir -p "$BASE_DIR"
 cd "$BASE_DIR"
 
@@ -40,11 +40,12 @@ fi
 
 # Build sample keystore
 echo "Creating sample QaD (quick-and-dirty) keystore..."
+KEYSTORE_DIR="$BASE_DIR/MyQuickAndDirtyKeystore"
 KEYSTORE_SCRIPT_URL="$RAW_URL/src/main/scripts/create-qad-keystore.sh"
 KEYSTORE_SCRIPT="$BASE_DIR/$(basename $KEYSTORE_SCRIPT_URL)"
 curl -L -o "$KEYSTORE_SCRIPT" "$KEYSTORE_SCRIPT_URL"
 chmod +x "$KEYSTORE_SCRIPT"
-sh "$KEYSTORE_SCRIPT"
+sh "$KEYSTORE_SCRIPT" "$KEYSTORE_DIR"
 
 # Download and run OpenUniverse build script
 echo "Downloading and running OpenUniverse build script..."
