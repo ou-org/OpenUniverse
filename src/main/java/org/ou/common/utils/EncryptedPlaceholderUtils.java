@@ -52,17 +52,4 @@ public class EncryptedPlaceholderUtils {
         return result.toString();
     }
 
-    // Example usage
-    public static void main(String[] args) {
-        IDecryptor sampleDecryptor = (encrypted, password) -> {
-            if (encrypted.equals("SECRET456")) return "";
-            return "decrypted(" + encrypted + ")";
-        };
-
-        String input = "My password is ${encrypted:ENCRYPTED123} and secret is ${encrypted:SECRET456}";
-        char[] password = "myPassword".toCharArray();
-
-        String result = replaceEncryptedPlaceholders(sampleDecryptor, input, password);
-        System.out.println(result);
-    }
 }

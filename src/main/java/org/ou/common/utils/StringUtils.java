@@ -41,17 +41,4 @@ public class StringUtils {
         }
         return arr;
     }
-
-    // quick demo
-    public static void main(String[] args) {
-        byte[] bin = parseBytes("011000010110001001100011", 2);  // "abc"
-        byte[] oct = parseBytes("141142143", 8);                 // "abc"
-        byte[] dec = parseBytes("097098099", 10);                // "abc"
-        byte[] hex = parseBytes("616263", 16);                   // "abc"
-
-        System.out.println(new String(bin));
-        System.out.println(new String(oct));
-        System.out.println(new String(dec));
-        System.out.println(new String(hex));
-    }
 }

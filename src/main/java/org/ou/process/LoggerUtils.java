@@ -24,6 +24,7 @@ package org.ou.process;
 
 import java.io.OutputStream;
 import java.lang.ProcessHandle.Info;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -34,6 +35,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +51,7 @@ import org.ou.common.constants.IRecordConst;
 import org.ou.common.utils.CommonUtils;
 import org.ou.common.utils.JvmMetricsUtils;
 import org.ou.common.utils.SignatureUtils;
+import org.ou.common.utils.TsaUtils;
 import org.ou.to.AbstractTo;
 import org.ou.to.ExportSettings;
 
@@ -87,7 +90,7 @@ public class LoggerUtils extends Thread {
      * @return
      * @throws Exception
      */
-    public static String printLoggerMap(String prev_record_chain_hash, boolean outputToConsole, Collection<ExportThread> exportConsoles, Collection<DmqThread> dlqThreads, Git git, Path logPath, String actionUuid, Map<String, Object> map, long serialNo, Map<String, Object> nodeInfoMap, Map<String, Object> repoInfoMap, Map<String, Object> gitRevCommitMap, PrivateKey privateKey, String signatureAlgorithm, String hashAlgorithm) throws Exception {
+    public static String printLoggerMap(String prev_record_chain_hash, boolean outputToConsole, Collection<ExportThread> exportConsoles, Collection<DmqThread> dlqThreads, Git git, Path logPath, String actionUuid, Map<String, Object> map, long serialNo, Map<String, Object> nodeInfoMap, Map<String, Object> repoInfoMap, Map<String, Object> gitRevCommitMap, PrivateKey privateKey, String signatureAlgorithm, TimestampSettings timestampSettings, String hashAlgorithm) throws Exception {
         Map<String, Object> eventMap = (Map) map.get(IConstants.EVENT_KEY);
         String eventClass = (String) eventMap.get(IEventConst.EVENT_SOURCE_CLASS_KEY);
         String eventType = (String) eventMap.get(IEventConst.EVENT_TYPE_KEY);
@@ -140,11 +143,22 @@ public class LoggerUtils extends Thread {
         }
 
         Map<String, Object> treeMap = new TreeMap<>(mapE);
+        
         if (privateKey != null) {
             treeMap.put(IRecordConst.OUT_RECORD_RECORD_SIGNATURE_KEY, null);
             treeMap.put(IRecordConst.OUT_RECORD_RECORD_SIGNATURE_ALG_KEY, null);
         }
+        if (timestampSettings.tsaUrl != null) {
+            treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_TSA_URL_KEY, null);
+            treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_ALG_OID_KEY, null);
+            treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_ALG_NAME_KEY, null);
+            treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_NONCE_KEY, null);
+            treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_RESPONSE_KEY, null);
+            treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_SERIAL_KEY, null);
+            treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_TIMESTAMP_KEY, null);
+        }
         treeMap.put(IRecordConst.OUT_RECORD_RECORD_FORMAT_HASH_KEY, null);
+
         Collection<String> keys = treeMap.keySet();
 
         int hash = getRecordFormatHash(keys);
@@ -162,6 +176,23 @@ public class LoggerUtils extends Thread {
             String signature = SignatureUtils.sign(bs, privateKey, signatureAlgorithm);
             treeMap.put(IRecordConst.OUT_RECORD_RECORD_SIGNATURE_KEY, signature);
             treeMap.put(IRecordConst.OUT_RECORD_RECORD_SIGNATURE_ALG_KEY, signatureAlgorithm);
+        }
+
+        if (timestampSettings.tsaUrl != null) {
+            BigInteger nonce = BigInteger.valueOf(System.currentTimeMillis());
+            byte[] digestBs = timestampSettings.messageDigest.digest(bs);
+            byte[] tsaRequestBs = TsaUtils.generateTsaRequest(digestBs, timestampSettings.algOid, nonce);
+            byte[] tsaResponseBs = TsaUtils.getTsaResponse(timestampSettings.tsaUrl, tsaRequestBs);
+            Map<String, Object> timestampDataMap = new HashMap();
+            TsaUtils.parseTsaResponse(tsaResponseBs, timestampDataMap);
+
+            treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_TSA_URL_KEY, timestampSettings.tsaUrlStr);
+            treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_ALG_OID_KEY, timestampSettings.algOidStr);
+            treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_ALG_NAME_KEY, timestampSettings.algName);
+            treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_NONCE_KEY, CommonUtils.bytesToHex(nonce.toByteArray()));
+            treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_RESPONSE_KEY, CommonUtils.bytesToHex(tsaResponseBs));
+            treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_SERIAL_KEY, timestampDataMap.get("serial"));
+            treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_TIMESTAMP_KEY, timestampDataMap.get("timestamp"));
         }
         if (outputToConsole) {
             OutputStream os = System.out;
@@ -209,7 +240,7 @@ public class LoggerUtils extends Thread {
                             Map<String, Object> undeliveredRecordMap = createUndeliveredRecordMap(jsonObj, exportSettings, t);
                             for (DmqThread dmqThread : dmqThreads) {
                                 try {
-                                    dmqThread.sendString(undeliveredRecordMap);                                    
+                                    dmqThread.sendString(undeliveredRecordMap);
                                 } catch (Throwable e) {
                                     MainProcess.healthUndeliveredRecordsCountDMQ++;
                                     MainProcess.appendToErrorLog(e, false);

@@ -97,7 +97,7 @@ intelligently.
 </ul>
 </p>
 
-## Getting Started: "Hello, Universe!"
+## The "Hello, Universe!" Example
 
 #### 1. Start the Universe:
 
@@ -119,7 +119,8 @@ Open your browser and go to:
 
 ## Why OpenUniverse Releases Are Source-Only
 
-OpenUniverse is distributed as **source code + build tooling**, not as precompiled binaries, by design. This approach gives you full control of the build process: you can inspect the code you’re running, compile it yourself without relying on opaque binaries, and keep sensitive build parameters (like your **keystore for JAR signing**) private. It also enables customization for different environments—Linux distributions, runtime integrations, or organization-specific signing keys and packaging rules—without shipping dozens of binary variants. Using the provided `build.sh` script and `build.properties` file ensures reproducible, deterministic builds so that anyone following the same steps gets identical results (aside from user-specific signing), aligning with modern open-source reproducible-build practices. Additionally, source-only releases are lightweight, requiring only standard dependencies such as JDK and Maven, and empower developers, operators, and infrastructure teams to explore, understand, and contribute to the platform rather than using it as a black box.
+OpenUniverse is distributed as **source code plus build tooling**, never as precompiled binaries, to ensure maximum security, compliance, and trust. By building locally, you control exactly what runs in your environment: you can audit the code, compile it yourself, and keep sensitive parameters, such as your JAR signing keystore, private and never exposed in public binaries. This approach meets regulatory and compliance requirements, allowing organizations to verify builds, enforce reproducibility, and maintain deterministic outputs. The provided `build.sh` script and `build.properties` file offer a flexible, reproducible, and customizable build pipeline for different Linux distributions, runtime integrations, and organization-specific security policies, without needing multiple prebuilt binaries. Source-only releases remain lightweight, depend only on standard tools like JDK and Maven, and empower developers, operators, and infrastructure teams to inspect, contribute to, and fully understand the platform, rather than relying on opaque black-box software.
+
 
 ## Build Official Production-ready Binaries
 

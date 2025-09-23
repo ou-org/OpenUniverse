@@ -179,8 +179,16 @@ To validate the AppImage signature, download the validation tool:
 wget https://github.com/AppImageCommunity/AppImageUpdate/releases/download/continuous/validate-x86_64.AppImage
 chmod +x validate-x86_64.AppImage
 ```
+Continuous build Pre-release
+Build log: https://github.com/AppImageCommunity/AppImageUpdate/actions/runs/15079240494
 
-Then validate:
+Validators for other platforms:
+
+https://github.com/AppImageCommunity/AppImageUpdate/releases/download/continuous/validate-aarch64.AppImage
+https://github.com/AppImageCommunity/AppImageUpdate/releases/download/continuous/validate-armhf.AppImage
+https://github.com/AppImageCommunity/AppImageUpdate/releases/download/continuous/validate-i686.AppImage
+https://github.com/AppImageCommunity/AppImageUpdate/releases/download/continuous/validate-x86_64.AppImage
+
 
 ```bash
 ./validate-x86_64.AppImage ou-linux-x86_64

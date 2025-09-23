@@ -52,6 +52,7 @@ public class RootDocTo extends AbstractTo {
     public Collection<AbstractTo> calendarTos = new LinkedHashSet<>();
     public Collection<AbstractTo> schedulerTos = new LinkedHashSet<>();
     public Map<String, Object> signSettingsMap;
+    public Map<String, Object> timestampSettingsMap;
     public Collection<CommandTo> exportDmqCommandTos = new LinkedHashSet<>();
     public Collection<ExportSettings> exportTargets = new LinkedHashSet<>();
     public String hashAlgorithm = DEFAULT_HASH_ALGORITHM;

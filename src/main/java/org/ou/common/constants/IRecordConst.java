@@ -37,9 +37,23 @@ public interface IRecordConst {
     String RECORD_TYPE_KEY = "type";
     String RECORD_TYPE_VALUE_TRIGGER = "trigger";
     String RECORD_TYPE_VALUE_PROCESSOR = "processor";
-    String OUT_RECORD_RECORD_FORMAT_HASH_KEY = "_record_format_hash_i";
+
+    
+    String OUT_RECORD_HASH_KEY = "record_hash_s";
+    
+    String OUT_RECORD_CHAIN_HASH_KEY = "record_chain_hash_s";
+    
+    String OUT_RECORD_RECORD_FORMAT_HASH_KEY = "_record_format_hash_i";  
+    
     String OUT_RECORD_RECORD_SIGNATURE_KEY = "_record_signature_s";
     String OUT_RECORD_RECORD_SIGNATURE_ALG_KEY = "_record_signature_alg_s";
-    String OUT_RECORD_HASH_KEY = "record_hash_s";
-    String OUT_RECORD_CHAIN_HASH_KEY = "record_chain_hash_s";
+    
+    // https://www.ietf.org/rfc/rfc3161.txt - RFC 3161 Time-Stamp Protocol (TSP)
+    String OUT_RECORD_RECORD_TIMESTAMP_TSA_URL_KEY = "_record_timestamp_tsa_url_s";
+    String OUT_RECORD_RECORD_TIMESTAMP_ALG_OID_KEY = "_record_timestamp_alg_oid_s";
+    String OUT_RECORD_RECORD_TIMESTAMP_ALG_NAME_KEY = "_record_timestamp_alg_name_s";
+    String OUT_RECORD_RECORD_TIMESTAMP_NONCE_KEY = "_record_timestamp_nonce_s";
+    String OUT_RECORD_RECORD_TIMESTAMP_RESPONSE_KEY = "_record_timestamp_response_s";
+    String OUT_RECORD_RECORD_TIMESTAMP_SERIAL_KEY = "_record_timestamp_serial_s";
+    String OUT_RECORD_RECORD_TIMESTAMP_TIMESTAMP_KEY = "_record_timestamp_timestamp_s";
 }

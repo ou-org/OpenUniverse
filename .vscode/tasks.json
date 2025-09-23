@@ -8,11 +8,10 @@
                 "isDefault": true
             },
             "type": "shell",
-            "command": "mvn clean install",
+            "command": "SIGN_JAR_KEYSTORE=${HOME}/HelloUniverse/MyQuickAndDirtyKeystore/keystore.p12 mvn clean verify -e",
             "options": {
                 "env": {
                     "OU_VERSION": "1.0.22",
-                    "SIGN_JAR_KEYSTORE": "${project.basedir}/sign-jar/keys/keystore.p12",
                     "SIGN_JAR_STORETYPE": "PKCS12",
                     "SIGN_JAR_ALIAS": "signing_alias",
                     "SIGN_JAR_KEYPASS": "your_password",

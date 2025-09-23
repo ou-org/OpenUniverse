@@ -23,6 +23,7 @@
 package org.ou.process;
 
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.security.PrivateKey;
 import java.util.Map;
@@ -36,7 +37,7 @@ import org.ou.common.constants.IConstants;
  * <p>
  * LoggerThread class.</p>
  *
-
+ *
  * @since 1.0.21
  */
 public class LoggerThread extends Thread {
@@ -51,6 +52,7 @@ public class LoggerThread extends Thread {
     private final String actionUuid = UUID.randomUUID().toString();
     private final PrivateKey privateKey;
     private final String signatureAlgorithm;
+    private final TimestampSettings timestampSettings;
     private final String hashAlgorithm;
 
     /**
@@ -67,7 +69,7 @@ public class LoggerThread extends Thread {
      * @param signatureAlgorithm
      * @throws IOException
      */
-    public LoggerThread(boolean outputToConsole, Git git, Path logPath, BlockingQueue<Map<String, Object>> loggerQueue, Map<String, Object> nodeInfoMap, Map<String, Object> repoInfoMap, Map<String, Object> gitRevCommitMap, PrivateKey privateKey, String signatureAlgorithm, String hashAlgorithm) throws IOException {
+    public LoggerThread(boolean outputToConsole, Git git, Path logPath, BlockingQueue<Map<String, Object>> loggerQueue, Map<String, Object> nodeInfoMap, Map<String, Object> repoInfoMap, Map<String, Object> gitRevCommitMap, PrivateKey privateKey, String signatureAlgorithm, TimestampSettings timestampSettings, String hashAlgorithm) throws IOException {
         this.outputToConsole = outputToConsole;
         this.git = git;
         this.logPath = logPath;
@@ -77,6 +79,7 @@ public class LoggerThread extends Thread {
         this.gitRevCommitMap = gitRevCommitMap;
         this.privateKey = privateKey;
         this.signatureAlgorithm = signatureAlgorithm;
+        this.timestampSettings = timestampSettings;
         this.hashAlgorithm = hashAlgorithm;
     }
 
@@ -92,7 +95,7 @@ public class LoggerThread extends Thread {
                 Map<String, Object> map = loggerQueue.take();
                 hostInfoMap.put(IConstants.ACTIVITY_ID_KEY, actionUuid);
                 try {
-                    prev_record_chain_hash = LoggerUtils.printLoggerMap(prev_record_chain_hash, outputToConsole, MainProcess.exportConsoles, MainProcess.dlqThreads, git, logPath, actionUuid, map, ++serialNo, hostInfoMap, repoInfoMap, gitRevCommitMap, privateKey, signatureAlgorithm, hashAlgorithm);
+                    prev_record_chain_hash = LoggerUtils.printLoggerMap(prev_record_chain_hash, outputToConsole, MainProcess.exportConsoles, MainProcess.dlqThreads, git, logPath, actionUuid, map, ++serialNo, hostInfoMap, repoInfoMap, gitRevCommitMap, privateKey, signatureAlgorithm, timestampSettings, hashAlgorithm);
                 } catch (Throwable t) {
                     t.printStackTrace();
                     //MainProcess.appendToErrorLog(t, false);
