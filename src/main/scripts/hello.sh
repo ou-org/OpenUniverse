@@ -35,7 +35,14 @@ set -e
 
 OU_VERSION="$1"
 TAG="v${OU_VERSION}"
+
+# Supported Architectures:
+#
+# x64       - 64-bit Intel/AMD
+# aarch64   - 64-bit ARM
 ARCH="$2"
+
+JAVA_VER="25"
 
 # GitHub raw content URL for OpenUniverse repository
 RAW_URL="https://raw.githubusercontent.com/ou-org/OpenUniverse/${TAG}"
@@ -45,12 +52,41 @@ RAW_URL="https://raw.githubusercontent.com/ou-org/OpenUniverse/${TAG}"
 # -----------------------------
 
 BASE_DIR="$HOME/HelloUniverse"
+REPO_DIR="$BASE_DIR/HelloUniverseRepo"
+RELEASE_DIR="$BASE_DIR/ou-${OU_VERSION}"
+CACHE_DIR="$BASE_DIR/.cache"
+JDK_DIR="$RELEASE_DIR/jre"
+
 mkdir -p "$BASE_DIR"
+mkdir -p "$REPO_DIR"
+mkdir -p "$CACHE_DIR"
+mkdir -p "$RELEASE_DIR"
+mkdir -p "$JDK_DIR"
+
+# -----------------------------
+# JDK SETUP
+# -----------------------------
+JDK_TAR_DOWNLOAD_URL="https://download.oracle.com/java/${JAVA_VER}/latest/jdk-${JAVA_VER}_linux-${ARCH}_bin.tar.gz"
+JDK_TAR_FILE_NAME="${JDK_TAR_DOWNLOAD_URL##*/}"
+JDK_TAR="$CACHE_DIR/$JDK_TAR_FILE_NAME"
+
+if [ ! -d "$JDK_DIR" ]; then
+  if [ -f "$JDK_TAR" ]; then
+    echo "Using cached JDK tarball: $JDK_TAR"
+  else
+    echo "Downloading JDK..."
+    curl -L -o "$JDK_TAR" \
+      "$JDK_TAR_DOWNLOAD_URL"
+  fi
+  mkdir -p "$JDK_DIR"
+  tar -xzf "$JDK_TAR" -C "$JDK_DIR" --strip-components=1
+else
+  echo "Using cached JDK installation: $JDK_DIR"
+fi
+
 cd "$BASE_DIR"
 
 # Create repo
-REPO_DIR="$BASE_DIR/HelloUniverseRepo"
-mkdir -p "$REPO_DIR"
 
 # Download example markdown file
 EXAMPLE_MD_URL="$RAW_URL/doc/examples/HelloUniverse.md"
@@ -91,7 +127,6 @@ curl -L -o "$BUILD_PROPERTIES" "$BUILD_PROPERTIES_URL"
 "$BUILD_SCRIPT" "$OU_VERSION" "$ARCH" "$BUILD_PROPERTIES" "$BASE_DIR"
 
 # Start OpenUniverse to process example repo
-RELEASE_DIR="$BASE_DIR/ou-${OU_VERSION}"
-exec "$RELEASE_DIR/ou-linux-x86_64" "$REPO_DIR" start --stdout < /dev/tty
+exec "$RELEASE_DIR/ou" "$REPO_DIR" start --stdout < /dev/tty
 
 #EOF
