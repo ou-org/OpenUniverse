@@ -62,27 +62,6 @@ mkdir -p "$REPO_DIR"
 mkdir -p "$CACHE_DIR"
 mkdir -p "$RELEASE_DIR"
 
-# -----------------------------
-# JDK SETUP
-# -----------------------------
-JDK_TAR_DOWNLOAD_URL="https://download.oracle.com/java/${JAVA_VER}/latest/jdk-${JAVA_VER}_linux-${ARCH}_bin.tar.gz"
-JDK_TAR_FILE_NAME="${JDK_TAR_DOWNLOAD_URL##*/}"
-JDK_TAR="$CACHE_DIR/$JDK_TAR_FILE_NAME"
-
-if [ ! -d "$JDK_DIR" ]; then
-  if [ -f "$JDK_TAR" ]; then
-    echo "Using cached JDK tarball: $JDK_TAR"
-  else
-    echo "Downloading JDK..."
-    curl -L -o "$JDK_TAR" \
-      "$JDK_TAR_DOWNLOAD_URL"
-  fi
-  mkdir -p "$JDK_DIR"
-  tar -xzf "$JDK_TAR" -C "$JDK_DIR" --strip-components=1
-else
-  echo "Using cached JDK installation: $JDK_DIR"
-fi
-
 cd "$BASE_DIR"
 
 # Create repo
@@ -124,6 +103,27 @@ BUILD_PROPERTIES="$BASE_DIR/$(basename $BUILD_PROPERTIES_URL)"
 curl -L -o "$BUILD_PROPERTIES" "$BUILD_PROPERTIES_URL"
 
 "$BUILD_SCRIPT" "$OU_VERSION" "$BUILD_PROPERTIES" "$BASE_DIR"
+
+# -----------------------------
+# JDK SETUP
+# -----------------------------
+JDK_TAR_DOWNLOAD_URL="https://download.oracle.com/java/${JAVA_VER}/latest/jdk-${JAVA_VER}_linux-${ARCH}_bin.tar.gz"
+JDK_TAR_FILE_NAME="${JDK_TAR_DOWNLOAD_URL##*/}"
+JDK_TAR="$CACHE_DIR/$JDK_TAR_FILE_NAME"
+
+if [ ! -d "$JDK_DIR" ]; then
+  if [ -f "$JDK_TAR" ]; then
+    echo "Using cached JDK tarball: $JDK_TAR"
+  else
+    echo "Downloading JDK..."
+    curl -L -o "$JDK_TAR" \
+      "$JDK_TAR_DOWNLOAD_URL"
+  fi
+  mkdir -p "$JDK_DIR"
+  tar -xzf "$JDK_TAR" -C "$JDK_DIR" --strip-components=1
+else
+  echo "Using cached JDK installation: $JDK_DIR"
+fi
 
 # Start OpenUniverse to process example repo
 exec "$RELEASE_DIR/ou" "$REPO_DIR" start --stdout < /dev/tty
