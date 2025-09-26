@@ -35,6 +35,7 @@ set -e
 
 OU_VERSION="$1"
 TAG="v${OU_VERSION}"
+ARCH="$2"
 
 # GitHub raw content URL for OpenUniverse repository
 RAW_URL="https://raw.githubusercontent.com/ou-org/OpenUniverse/${TAG}"
@@ -88,7 +89,7 @@ BUILD_PROPERTIES="$BASE_DIR/$(basename $BUILD_PROPERTIES_URL)"
 curl -L -o "$BUILD_PROPERTIES" "$BUILD_PROPERTIES_URL"
 
 RELEASE_DIR="$BASE_DIR/ou-${OU_VERSION}"
-"$BUILD_SCRIPT" "$OU_VERSION" "$BUILD_PROPERTIES" "$RELEASE_DIR"
+"$BUILD_SCRIPT" "$OU_VERSION" "$ARCH" "$BUILD_PROPERTIES" "$RELEASE_DIR"
 
 # Start OpenUniverse to process example repo
 exec "$RELEASE_DIR/ou-linux-x86_64" "$REPO_DIR" start --stdout < /dev/tty

@@ -82,6 +82,14 @@
             <version>2.18.2</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/commons-net/commons-net -->
+        <!-- License(s): Apache 2.0 -->
+        <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+            <version>3.12.0</version>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/org.apache.solr/solr-solrj -->
         <!-- License(s): Apache 2.0 -->
         <dependency>
@@ -131,6 +139,13 @@
             <version>1.82</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.jitsi/ice4j -->
+        <!-- License(s): Apache 2.0 -->
+        <dependency>
+            <groupId>org.jitsi</groupId>
+            <artifactId>ice4j</artifactId>
+            <version>3.2-9-gb64c86f</version>
+        </dependency>
     </dependencies>
 
     <build>

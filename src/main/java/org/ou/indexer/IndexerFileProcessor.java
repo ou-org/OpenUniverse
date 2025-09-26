@@ -180,6 +180,7 @@ public class IndexerFileProcessor implements IFileProcessor {
                 rootTo.jobs = (String) map.get("jobs");
                 rootTo.triggers = (String) map.get("triggers");
                 rootTo.signSettingsMap = (Map) map.get("sign");
+                rootTo.ntpSettingsMap = (Map) map.get("ntp");
                 rootTo.timestampSettingsMap = (Map) map.get("timestamp");
                 Collection<Map<String, Object>> dmqCommandsListOfMaps = (Collection) map.get("export_dmqs");
                 if (dmqCommandsListOfMaps != null) {

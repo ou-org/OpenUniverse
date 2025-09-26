@@ -29,13 +29,11 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.security.PrivateKey;
 import java.time.Duration;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +48,7 @@ import org.ou.common.constants.IEventConst;
 import org.ou.common.constants.IRecordConst;
 import org.ou.common.utils.CommonUtils;
 import org.ou.common.utils.JvmMetricsUtils;
+import org.ou.common.utils.NtpUtils;
 import org.ou.common.utils.SignatureUtils;
 import org.ou.common.utils.TsaUtils;
 import org.ou.to.AbstractTo;
@@ -90,7 +89,7 @@ public class LoggerUtils extends Thread {
      * @return
      * @throws Exception
      */
-    public static String printLoggerMap(String prev_record_chain_hash, boolean outputToConsole, Collection<ExportThread> exportConsoles, Collection<DmqThread> dlqThreads, Git git, Path logPath, String actionUuid, Map<String, Object> map, long serialNo, Map<String, Object> nodeInfoMap, Map<String, Object> repoInfoMap, Map<String, Object> gitRevCommitMap, PrivateKey privateKey, String signatureAlgorithm, TimestampSettings timestampSettings, String hashAlgorithm) throws Exception {
+    public static String printLoggerMap(String prev_record_chain_hash, boolean outputToConsole, Collection<ExportThread> exportConsoles, Collection<DmqThread> dlqThreads, Git git, Path logPath, String actionUuid, Map<String, Object> map, long serialNo, Map<String, Object> nodeInfoMap, Map<String, Object> repoInfoMap, Map<String, Object> gitRevCommitMap, String hashAlgorithm) throws Exception {
         Map<String, Object> eventMap = (Map) map.get(IConstants.EVENT_KEY);
         String eventClass = (String) eventMap.get(IEventConst.EVENT_SOURCE_CLASS_KEY);
         String eventType = (String) eventMap.get(IEventConst.EVENT_TYPE_KEY);
@@ -143,12 +142,12 @@ public class LoggerUtils extends Thread {
         }
 
         Map<String, Object> treeMap = new TreeMap<>(mapE);
-        
-        if (privateKey != null) {
+
+        if (MainProcess.signatureSettings != null && MainProcess.signatureSettings.privateKey != null) {
             treeMap.put(IRecordConst.OUT_RECORD_RECORD_SIGNATURE_KEY, null);
             treeMap.put(IRecordConst.OUT_RECORD_RECORD_SIGNATURE_ALG_KEY, null);
         }
-        if (timestampSettings.tsaUrl != null) {
+        if (MainProcess.timestampSettings != null && !MainProcess.timestampSettings.tsaUrls.isEmpty()) {
             treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_TSA_URL_KEY, null);
             treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_ALG_OID_KEY, null);
             treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_ALG_NAME_KEY, null);
@@ -156,7 +155,9 @@ public class LoggerUtils extends Thread {
             treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_RESPONSE_KEY, null);
             treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_SERIAL_KEY, null);
             treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_TIMESTAMP_KEY, null);
+            treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_ERROR_KEY, null);
         }
+
         treeMap.put(IRecordConst.OUT_RECORD_RECORD_FORMAT_HASH_KEY, null);
 
         Collection<String> keys = treeMap.keySet();
@@ -172,28 +173,46 @@ public class LoggerUtils extends Thread {
         String record_chain_hash = CommonUtils.hashBytes(bs, hashAlgorithm);
         treeMap.put(IRecordConst.OUT_RECORD_CHAIN_HASH_KEY, record_chain_hash);
 
-        if (privateKey != null) {
-            String signature = SignatureUtils.sign(bs, privateKey, signatureAlgorithm);
+        if (MainProcess.signatureSettings != null && MainProcess.signatureSettings.privateKey != null) {
+            String signature = SignatureUtils.sign(bs, MainProcess.signatureSettings.privateKey, MainProcess.signatureSettings.signatureAlgorithm);
             treeMap.put(IRecordConst.OUT_RECORD_RECORD_SIGNATURE_KEY, signature);
-            treeMap.put(IRecordConst.OUT_RECORD_RECORD_SIGNATURE_ALG_KEY, signatureAlgorithm);
+            treeMap.put(IRecordConst.OUT_RECORD_RECORD_SIGNATURE_ALG_KEY, MainProcess.signatureSettings.signatureAlgorithm);
         }
 
-        if (timestampSettings.tsaUrl != null) {
+        if (MainProcess.timestampSettings != null && !MainProcess.timestampSettings.tsaUrls.isEmpty()) {
             BigInteger nonce = BigInteger.valueOf(System.currentTimeMillis());
-            byte[] digestBs = timestampSettings.messageDigest.digest(bs);
-            byte[] tsaRequestBs = TsaUtils.generateTsaRequest(digestBs, timestampSettings.algOid, nonce);
-            byte[] tsaResponseBs = TsaUtils.getTsaResponse(timestampSettings.tsaUrl, tsaRequestBs);
-            Map<String, Object> timestampDataMap = new HashMap();
-            TsaUtils.parseTsaResponse(tsaResponseBs, timestampDataMap);
+            byte[] digestBs = MainProcess.timestampSettings.messageDigest.digest(bs);
+            byte[] tsaRequestBs = TsaUtils.generateTsaRequest(digestBs, MainProcess.timestampSettings.algOid, nonce);
 
-            treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_TSA_URL_KEY, timestampSettings.tsaUrlStr);
-            treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_ALG_OID_KEY, timestampSettings.algOidStr);
-            treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_ALG_NAME_KEY, timestampSettings.algName);
-            treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_NONCE_KEY, CommonUtils.bytesToHex(nonce.toByteArray()));
-            treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_RESPONSE_KEY, CommonUtils.bytesToHex(tsaResponseBs));
-            treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_SERIAL_KEY, timestampDataMap.get("serial"));
-            treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_TIMESTAMP_KEY, timestampDataMap.get("timestamp"));
+            for (String tsaUrl : MainProcess.timestampSettings.tsaUrls) {
+                if (treeMap.get(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_TSA_URL_KEY) == null) {
+                    try {
+                        byte[] tsaResponseBs = TsaUtils.getTsaResponse(tsaUrl, tsaRequestBs);
+                        Map<String, Object> timestampDataMap = TsaUtils.parseTsaResponse(tsaResponseBs);
+                        treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_TSA_URL_KEY, tsaUrl);
+                        treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_ALG_OID_KEY, MainProcess.timestampSettings.algOidStr);
+                        treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_ALG_NAME_KEY, MainProcess.timestampSettings.algName);
+                        treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_NONCE_KEY, CommonUtils.bytesToHex(nonce.toByteArray()));
+                        treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_RESPONSE_KEY, CommonUtils.bytesToHex(tsaResponseBs));
+                        treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_SERIAL_KEY, timestampDataMap.get("serial"));
+                        treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_TIMESTAMP_KEY, timestampDataMap.get("timestamp"));
+                        treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_ERROR_KEY, null);
+                        break;
+                    } catch (Exception e) {
+                        treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_ERROR_KEY, e.getMessage());
+                        e.printStackTrace();                        
+                    }
+                }
+            }
         }
+
+        if (MainProcess.ntpSettings.ntpServer != null) {
+            treeMap.put(IRecordConst.OUT_RECORD_RECORD_NTP_SERVER_HOST_KEY, MainProcess.ntpSettings.ntpServer);
+            treeMap.put(IRecordConst.OUT_RECORD_RECORD_NTP_SERVER_PORT_KEY, MainProcess.ntpSettings.ntpPort);
+            String utcIsoTime = NtpUtils.getUtcIsoTime(MainProcess.ntpSettings.ntpClient, MainProcess.ntpSettings.ntpHostAddr, MainProcess.ntpSettings.ntpPort);
+            treeMap.put(IRecordConst.OUT_RECORD_RECORD_NTP_TIMESTAMP_KEY, utcIsoTime);
+        }
+
         if (outputToConsole) {
             OutputStream os = System.out;
             synchronized (os) {

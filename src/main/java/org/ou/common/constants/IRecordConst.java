@@ -56,4 +56,10 @@ public interface IRecordConst {
     String OUT_RECORD_RECORD_TIMESTAMP_RESPONSE_KEY = "_record_timestamp_response_s";
     String OUT_RECORD_RECORD_TIMESTAMP_SERIAL_KEY = "_record_timestamp_serial_s";
     String OUT_RECORD_RECORD_TIMESTAMP_TIMESTAMP_KEY = "_record_timestamp_timestamp_s";
+    String OUT_RECORD_RECORD_TIMESTAMP_ERROR_KEY = "_record_timestamp_error_s";
+
+    // https://www.ietf.org/rfc/rfc5905 - RFC 5905 Network Time Protocol (NTP)
+    String OUT_RECORD_RECORD_NTP_TIMESTAMP_KEY = "_record_ntp_timestamp_s";
+    String OUT_RECORD_RECORD_NTP_SERVER_HOST_KEY = "_record_ntp_server_host_s";
+    String OUT_RECORD_RECORD_NTP_SERVER_PORT_KEY = "_record_ntp_server_port_i";
 }

@@ -25,26 +25,69 @@
 # OpenUniverse Build Script
 #
 
-export OU_VERSION="$1"
 
-if [ -n "$2" ]; then
-  PROPERTIES_FILE="$2"
-else
-  PROPERTIES_FILE="$HOME/.ou-build/build.properties"
+# Supported Architectures:
+#
+# x86_64       - 64-bit Intel/AMD
+# aarch64      - 64-bit ARM
+
+#!/bin/sh
+set -eu
+
+usage() {
+    cat <<EOF
+Usage: $0 <OU_VERSION> <ARCH> <PROPERTIES_FILE> <OUT_DIR>
+
+Positional args:
+  OU_VERSION       Version string to use (required)
+  ARCH             Target architecture (required). Supported: x86_64, aarch64
+  PROPERTIES_FILE  Path to properties file (required)
+  OUT_DIR          Output directory (required)
+
+Examples:
+  $0 1.2.3 x86_64 ./project.properties ./dist
+  $0 1.2.3 aarch64 ~/configs/props ~/out
+EOF
+}
+
+# Require exactly 4 args
+if [ "$#" -ne 4 ]; then
+    echo "ERROR: wrong number of arguments" >&2
+    echo >&2
+    usage
+    exit 1
 fi
 
-set -e
+export OU_VERSION="$1"
+
+# Supported Architectures:
+#
+# x86_64       - 64-bit Intel/AMD
+# aarch64      - 64-bit ARM
+ARCH=$2
+PROPERTIES_FILE=$3
+OUT_DIR=$4
+
 set -a
 . "$PROPERTIES_FILE"
 set +a
+
+JAVA_VER="25"
+
+if [ "$ARCH" = "x86_64" ]; then
+    JAVA_ARCH="x64"
+elif [ "$ARCH" = "aarch64" ]; then
+    JAVA_ARCH="aarch64"
+fi
+
 
 # -----------------------------
 # URLs
 # -----------------------------
 REPO_URL="https://github.com/ou-org/OpenUniverse.git"
-JDK_TAR_DOWNLOAD_URL="https://download.oracle.com/java/24/latest/jdk-24_linux-x64_bin.tar.gz"
-APP_IMAGE_TOOL_DOWNLOAD_URL="https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage"
-RUNTIME_x86_64_DOWNLOAD_URL="https://github.com/AppImage/type2-runtime/releases/download/continuous/runtime-x86_64"
+JDK_TAR_DOWNLOAD_URL="https://download.oracle.com/java/${JAVA_VER}/latest/jdk-${JAVA_VER}_linux-${JAVA_ARCH}_bin.tar.gz"
+APP_IMAGE_TOOL_DOWNLOAD_URL="https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-${ARCH}.AppImage"
+RUNTIME_DOWNLOAD_URL="https://github.com/AppImage/type2-runtime/releases/download/continuous/runtime-${ARCH}"
 
 # -----------------------------
 # DIRS
@@ -57,7 +100,7 @@ mkdir -p "$CACHE_DIR"
 # -----------------------------
 JDK_TAR_FILE_NAME="${JDK_TAR_DOWNLOAD_URL##*/}"
 APP_IMAGE_TOOL_FILE_NAME="${APP_IMAGE_TOOL_DOWNLOAD_URL##*/}"
-RUNTIME_x86_64_FILE_NAME="${RUNTIME_x86_64_DOWNLOAD_URL##*/}"
+RUNTIME_FILE_NAME="${RUNTIME_DOWNLOAD_URL##*/}"
 
 # -----------------------------
 # PREREQUISITE CHECKS
@@ -119,11 +162,10 @@ else
   echo "Using cached appimagetool: $APP_IMAGE_TOOL"
 fi
 
-RUNTIME="$CACHE_DIR/$RUNTIME_x86_64_FILE_NAME"
+RUNTIME="$CACHE_DIR/$RUNTIME_FILE_NAME"
 if [ ! -f "$RUNTIME" ]; then
   echo "Downloading AppImage runtime..."
-  curl -L -o "$RUNTIME" \
-    "$RUNTIME_x86_64_DOWNLOAD_URL"
+  curl -L -o "$RUNTIME" "$RUNTIME_DOWNLOAD_URL"
   chmod +x "$RUNTIME"
 fi
 
@@ -156,24 +198,20 @@ rsync -a --delete "$JDK_DIR/" "$APP_DIR/jre/"
 cp "$REPO_DIR/target/ou" "$APP_DIR"
 
 if [ -z "${YOUR_40_CHARACTER_HEX_FINGERPRINT:-}" ]; then
-    ARCH=x86_64 "$APP_IMAGE_TOOL" "$APP_DIR" "$REPO_DIR/target/ou-linux-x86_64" --runtime-file "$RUNTIME"
+    "$APP_IMAGE_TOOL" "$APP_DIR" "$REPO_DIR/target/ou-linux-${ARCH}" --runtime-file "$RUNTIME"
 else
-    ARCH=x86_64 "$APP_IMAGE_TOOL" "$APP_DIR" "$REPO_DIR/target/ou-linux-x86_64" --runtime-file "$RUNTIME" --sign --sign-key "$YOUR_40_CHARACTER_HEX_FINGERPRINT"
+    "$APP_IMAGE_TOOL" "$APP_DIR" "$REPO_DIR/target/ou-linux-${ARCH}" --runtime-file "$RUNTIME" --sign --sign-key "$YOUR_40_CHARACTER_HEX_FINGERPRINT"
 fi
 
-if [ -n "$3" ]; then
-  OUT_DIR="$3"
-else
-  OUT_DIR="$HOME/ou-${OU_VERSION}"
-fi
+VER_DIR="${OUT_DIR}/ou-${OU_VERSION}"
 
-rm -rf "$OUT_DIR"
-mkdir -p "$OUT_DIR"
+rm -rf "$VER_DIR"
+mkdir -p "$VER_DIR"
 
-cp "$REPO_DIR/target/ou-$OU_VERSION.jar" "$OUT_DIR"
-cp "$REPO_DIR/target/ou" "$OUT_DIR"
-cp "$REPO_DIR/target/ou-linux-x86_64" "$OUT_DIR"
+cp "$REPO_DIR/target/ou-$OU_VERSION.jar" "$VER_DIR"
+cp "$REPO_DIR/target/ou" "$VER_DIR"
+cp "$REPO_DIR/target/ou-linux-${ARCH}" "$VER_DIR"
 
-echo "Build completed. Artifacts should be in $OUT_DIR"
+echo "Build completed. Artifacts should be in $VER_DIR"
 
 # EOF

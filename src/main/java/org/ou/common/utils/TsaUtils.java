@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -33,9 +34,10 @@ public class TsaUtils {
         return request.getEncoded();
     }
 
-    public static byte[] getTsaResponse(URL tsaUrl, byte[] requestBytes) throws IOException {
-        HttpURLConnection conn = (HttpURLConnection) tsaUrl.openConnection();
+    public static byte[] getTsaResponse(String tsaUrl, byte[] requestBytes) throws IOException {
+        HttpURLConnection conn = (HttpURLConnection) new URL(tsaUrl).openConnection();
         conn.setDoOutput(true);
+        //conn.setReadTimeout(3000);
         conn.setRequestMethod("POST");
         conn.setRequestProperty("Content-Type", "application/timestamp-query");
         conn.setRequestProperty("Content-Length", String.valueOf(requestBytes.length));
@@ -51,12 +53,14 @@ public class TsaUtils {
         return respBytes;
     }
 
-    public static void parseTsaResponse(byte[] respBytes, Map<String, Object> map) throws IOException, TSPException {
+    public static Map<String, Object> parseTsaResponse(byte[] respBytes) throws IOException, TSPException {
+        Map<String, Object> map = new HashMap(2);
         TimeStampResponse response = new TimeStampResponse(respBytes);
         TimeStampToken tsToken = response.getTimeStampToken();
         TimeStampTokenInfo tsTokenInfo = tsToken.getTimeStampInfo();
         map.put("timestamp", tsTokenInfo.getGenTime());
         map.put("serial", tsTokenInfo.getSerialNumber());
+        return map;
     }
 
     public static String normalizeDigestName(String bcName) {

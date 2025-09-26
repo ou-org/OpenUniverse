@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.ProcessHandle.Info;
-import java.net.URL;
+import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -51,13 +51,13 @@ import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.apache.commons.net.ntp.NTPUDPClient;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.operator.DefaultAlgorithmNameFinder;
 import org.eclipse.jgit.api.Git;
@@ -160,6 +160,10 @@ public class MainProcess {
     public static final BlockingQueue<TriggerQueueEntry> triggersQueue = new LinkedBlockingQueue<>(QUEUE_CAPACITY);
     public static final Collection<ExportThread> exportConsoles = new ArrayList<>(0);
     public static final Collection<DmqThread> dlqThreads = new ArrayList<>(0);
+
+    public static SignatureSettings signatureSettings;
+    public static NtpSettings ntpSettings;
+    public static TimestampSettings timestampSettings;
 
     private static Git git;
     private static boolean noColor;
@@ -903,10 +907,9 @@ public class MainProcess {
                 System.err.println();
                 // *** Print stat END *** //
 
-                String signatureAlgorithm = null;
-                PrivateKey privateKey = null;
                 Map<String, Object> signSettingsMap = rootTo.signSettingsMap;
                 if (signSettingsMap != null) {
+                    signatureSettings = new SignatureSettings();
                     signSettingsMap = (Map<String, Object>) TemplateUtils.transform(signSettingsMap, defaultPropertiesMap, decryptor, secret);
                     //TemplateUtils.decryptProperties(signSettingsMap, decryptCommand, secret);
                     //TemplateUtils.decryptProperties(pool, signSettingsMap, secret);
@@ -930,21 +933,18 @@ public class MainProcess {
                     if (keyPassword == null || keyPassword.isBlank()) {
                         keyPassword = ""; // default
                     }
-                    signatureAlgorithm = (String) signSettingsMap.get("sign_signature_algorithm");
-                    if (signatureAlgorithm == null || signatureAlgorithm.isBlank()) {
-                        signatureAlgorithm = "SHA256withRSA"; // default
+                    signatureSettings.signatureAlgorithm = (String) signSettingsMap.get("sign_signature_algorithm");
+                    if (signatureSettings.signatureAlgorithm == null || signatureSettings.signatureAlgorithm.isBlank()) {
+                        signatureSettings.signatureAlgorithm = "SHA256withRSA"; // default
                     }
-                    privateKey = SignatureUtils.getPrivateKey(keyStoreFile, keyStoreType, keyStorePassword, keyAlias, keyPassword);
+                    signatureSettings.privateKey = SignatureUtils.getPrivateKey(keyStoreFile, keyStoreType, keyStorePassword, keyAlias, keyPassword);
                 }
 
-                TimestampSettings timestampSettings = new TimestampSettings();
                 Map<String, Object> timestampSettingsMap = rootTo.timestampSettingsMap;
                 if (timestampSettingsMap != null) {
+                    timestampSettings = new TimestampSettings();
                     timestampSettingsMap = (Map<String, Object>) TemplateUtils.transform(timestampSettingsMap, defaultPropertiesMap, decryptor, secret);
-                    timestampSettings.tsaUrlStr = (String) timestampSettingsMap.get("timestamp_tsa");
-                    if (timestampSettings.tsaUrlStr != null) {
-                        timestampSettings.tsaUrl = new URL(timestampSettings.tsaUrlStr);
-                    }
+                    timestampSettings.tsaUrls = (List) timestampSettingsMap.get("timestamp_tsa_list");
                     timestampSettings.algOidStr = (String) timestampSettingsMap.get("timestamp_alg_oid");
                     if (timestampSettings.algOidStr == null) {
                         timestampSettings.algOidStr = "2.16.840.1.101.3.4.2.1"; // SHA-256 OID
@@ -953,6 +953,16 @@ public class MainProcess {
                     AlgorithmIdentifier algId = new AlgorithmIdentifier(timestampSettings.algOid);
                     timestampSettings.algName = TsaUtils.normalizeDigestName(new DefaultAlgorithmNameFinder().getAlgorithmName(algId));
                     timestampSettings.messageDigest = MessageDigest.getInstance(timestampSettings.algName);
+                }
+
+                ntpSettings = new NtpSettings();
+                Map<String, Object> ntpSettingsMap = rootTo.ntpSettingsMap;
+                if (ntpSettingsMap != null) {
+                    ntpSettingsMap = (Map<String, Object>) TemplateUtils.transform(ntpSettingsMap, defaultPropertiesMap, decryptor, secret);
+                    ntpSettings.ntpServer = (String) ntpSettingsMap.get("ntp_server");
+                    ntpSettings.ntpPort = (Integer) ntpSettingsMap.get("ntp_port");
+                    ntpSettings.ntpClient = new NTPUDPClient();
+                    ntpSettings.ntpHostAddr = InetAddress.getByName(ntpSettings.ntpServer);
                 }
 
                 String hashAlgorithm = rootTo.hashAlgorithm;
@@ -984,7 +994,7 @@ public class MainProcess {
                 mapStart.put(IEventConst.EVENT_SOURCE_CLASS_KEY, IEventConst.EVENT_SOURCE_CLASS_VALUE_CONTROL);
                 mapStart.put(IEventConst.EVENT_TYPE_KEY, IEventConst.EVENT_TYPE_VALUE_CONTROL_START);
                 TriggerUtils.processEvent(mapStart, rootTo, null, triggersQueue, loggerQueue);
-                start(outputToConsole, git, logPath, scheduler, rootTo, nodeInfoMap, repoInfoMap, gitRevCommitMap, privateKey, signatureAlgorithm, timestampSettings, hashAlgorithm);
+                start(outputToConsole, git, logPath, scheduler, rootTo, nodeInfoMap, repoInfoMap, gitRevCommitMap, hashAlgorithm);
             } catch (Throwable t) {
                 appendToErrorLog(t, true);
             }
@@ -992,9 +1002,9 @@ public class MainProcess {
         }
     }
 
-    private static void start(boolean outputToConsole, Git git, Path logPath, Scheduler scheduler, RootDocTo rootTo, Map<String, Object> nodeInfoMap, Map<String, Object> repoInfoMap, Map<String, Object> gitRevCommitMap, PrivateKey privateKey, String signatureAlgorithm, TimestampSettings timestampSettings, String hashAlgorithm) throws Exception {
+    private static void start(boolean outputToConsole, Git git, Path logPath, Scheduler scheduler, RootDocTo rootTo, Map<String, Object> nodeInfoMap, Map<String, Object> repoInfoMap, Map<String, Object> gitRevCommitMap, String hashAlgorithm) throws Exception {
         // Start logging
-        loggerThread = new LoggerThread(outputToConsole, git, logPath, loggerQueue, nodeInfoMap, repoInfoMap, gitRevCommitMap, privateKey, signatureAlgorithm, timestampSettings, hashAlgorithm);
+        loggerThread = new LoggerThread(outputToConsole, git, logPath, loggerQueue, nodeInfoMap, repoInfoMap, gitRevCommitMap, hashAlgorithm);
         loggerThread.start();
 
         // Start processors

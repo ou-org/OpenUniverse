@@ -22,16 +22,13 @@
  */
 package org.ou.process;
 
-import java.security.MessageDigest;
-import java.util.ArrayList;
-import java.util.List;
+import java.net.InetAddress;
 
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.apache.commons.net.ntp.NTPUDPClient;
 
-public class TimestampSettings {
-    public List<String> tsaUrls = new ArrayList();
-    public MessageDigest messageDigest;
-    public String algName;
-    public String algOidStr;
-    public ASN1ObjectIdentifier algOid;
+public class NtpSettings {
+    public String ntpServer;
+    public Integer ntpPort;
+    public NTPUDPClient ntpClient;
+    public InetAddress ntpHostAddr;
 }

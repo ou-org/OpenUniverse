@@ -22,16 +22,10 @@
  */
 package org.ou.process;
 
-import java.security.MessageDigest;
-import java.util.ArrayList;
-import java.util.List;
+import java.security.PrivateKey;
 
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+public class SignatureSettings {
 
-public class TimestampSettings {
-    public List<String> tsaUrls = new ArrayList();
-    public MessageDigest messageDigest;
-    public String algName;
-    public String algOidStr;
-    public ASN1ObjectIdentifier algOid;
+    public String signatureAlgorithm;
+    public PrivateKey privateKey;
 }

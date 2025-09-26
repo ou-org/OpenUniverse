@@ -102,7 +102,7 @@ intelligently.
 #### 1. Start the Universe:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/ou-org/OpenUniverse/v1.0.22/src/main/scripts/hello.sh | sh -s -- 1.0.22
+curl -fsSL https://raw.githubusercontent.com/ou-org/OpenUniverse/v1.0.22/src/main/scripts/hello.sh | sh -s -- 1.0.22 x86_64
 ```
 > [!NOTE]
 > This will take a few Earth minutes.
