@@ -1,9 +1,8 @@
 [Desktop Entry]
 Name=OpenUniverse
-Comment=OpenUnvierse — The UaC (Universe as Code) platform
+Comment=OpenUnvierse - The UaC (Universe as Code) platform
 Exec=AppRun
 Icon=glucose_8205747
 Type=Application
 Categories=Utility;
 Terminal=true
-Name[en_US]=ou-linux-x86_64.desktop
