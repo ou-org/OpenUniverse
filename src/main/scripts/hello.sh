@@ -91,7 +91,7 @@ curl -L -o "$BUILD_PROPERTIES" "$BUILD_PROPERTIES_URL"
 "$BUILD_SCRIPT" "$OU_VERSION" "$ARCH" "$BUILD_PROPERTIES" "$BASE_DIR"
 
 # Start OpenUniverse to process example repo
-RELEASE_DIR="$BASE_DIR/ou-${OU-VERSION}"
+RELEASE_DIR="$BASE_DIR/ou-${OU_VERSION}"
 exec "$RELEASE_DIR/ou-linux-x86_64" "$REPO_DIR" start --stdout < /dev/tty
 
 #EOF
