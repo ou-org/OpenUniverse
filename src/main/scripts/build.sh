@@ -125,8 +125,6 @@ REPO_DIR="$(pwd)"
 echo "Running Maven build..."
 mvn clean verify -e -DskipTests
 
-cp "$REPO_DIR/target/ou" "$APP_DIR"
-
 VER_DIR="${OUT_DIR}/ou-${OU_VERSION}"
 
 rm -rf "$VER_DIR"
