@@ -37,8 +37,6 @@ if [ $# -ne 1 ]; then
     echo "  $0 <distribution>"
     echo
     echo "Supported distribution types:"
-    echo "  - ou-linux-<arch> Native executable, validated by external AppImage validator"
-    echo "                    and then its embedded JAR is checked with internal jarsigner"
     echo "  - ou              Cross-platform executable validated by external jarsigner"
     echo "  - ou-<ver>.jar    JAR-file, validated by external jarsigner"
     echo
@@ -47,7 +45,6 @@ if [ $# -ne 1 ]; then
     echo "   1   Validation failed"
     echo
     echo "Examples:"
-    echo "  $0 ou-linux-x86_64"
     echo "  $0 ou"
     echo "  $0 ou-1.2.3.jar"
     exit 1
@@ -61,106 +58,27 @@ if [ ! -f "$DIST" ]; then
 fi
 
 BASENAME=$(basename "$DIST")
+DIRNAME=$(dirname "$DIST")
 
-# --------------------------
-# Case 1: AppImage
-# --------------------------
-if echo "$BASENAME" | grep -Eq '^ou-linux-[a-z0-9_]+$'; then
-    echo "Detected AppImage distribution"
+cd $DIRNAME
 
-    ARCH=$(echo "$BASENAME" | sed -E 's/^ou-linux-([a-z0-9_]+)$/\1/')
-    if [ -z "$ARCH" ]; then
-        echo "Cannot determine architecture from filename: $BASENAME"
-        exit 1
-    fi
-    echo "Detected architecture: $ARCH"
-
-    BASE_URL="https://github.com/AppImageCommunity/AppImageUpdate/releases/download/continuous"
-    CACHE_DIR="$HOME/.cache/validator"
-    mkdir -p "$CACHE_DIR"
-
-    case "$ARCH" in
-      x86_64) FILE="validate-x86_64.AppImage" ;;
-      i686) FILE="validate-i686.AppImage" ;;
-      aarch64) FILE="validate-aarch64.AppImage" ;;
-      armv7l|armhf) FILE="validate-armhf.AppImage" ;;
-      *) echo "Unsupported architecture: $ARCH" ; exit 1 ;;
-    esac
-
-    VALIDATOR="$CACHE_DIR/$FILE"
-    if [ ! -f "$VALIDATOR" ]; then
-        echo "Downloading validator for $ARCH..."
-        curl -L -o "$VALIDATOR" "$BASE_URL/$FILE"
-        chmod +x "$VALIDATOR"
-        echo "Validator cached: $VALIDATOR"
-    else
-        echo "Using cached validator: $VALIDATOR"
-    fi
-
-    echo "Validating $DIST..."
-    "$VALIDATOR" "$DIST"
-    if [ $? -ne 0 ]; then
-        echo "AppImage validation failed!"
-        exit 1
-    fi
-    echo "AppImage validation successful."
-
-    echo "Extracting $DIST..."
-    rm -rf squashfs-root
-    "$DIST" --appimage-extract
-    if [ ! -d squashfs-root ]; then
-        echo "Extraction failed!"
-        exit 1
-    fi
-
-    JARSIGNER="squashfs-root/jre/bin/jarsigner"
-    OU_JAR="squashfs-root/ou"
-
-    if [ ! -x "$JARSIGNER" ]; then
-        echo "jarsigner not found at $JARSIGNER"
-        rm -rf squashfs-root
-        exit 1
-    fi
-    if [ ! -f "$OU_JAR" ]; then
-        echo "ou not found at $OU_JAR"
-        rm -rf squashfs-root
-        exit 1
-    fi
-
-    echo "Validating ou with internal jarsigner..."
-    "$JARSIGNER" -verify "$OU_JAR"
-    if [ $? -eq 0 ]; then
-        echo "ou validation successful!"
-        rm -rf squashfs-root
-    else
-        echo "ou validation failed!"
-        rm -rf squashfs-root
-        exit 1
-    fi
-
-# --------------------------
-# Case 2: Plain ou or JAR
-# --------------------------
-elif [ "$BASENAME" = "ou" ] || echo "$BASENAME" | grep -qE '\.jar$'; then
-    echo "Detected JAR distribution: $BASENAME"
-    if ! command -v jarsigner >/dev/null 2>&1; then
-        echo "jarsigner not found in PATH"
-        exit 1
-    fi
-    echo "Validating $DIST with external jarsigner..."
-    jarsigner -verify "$DIST"
-    if [ $? -eq 0 ]; then
-        echo "$DIST validation successful!"
-    else
-        echo "$DIST validation failed!"
-        exit 1
-    fi
-
-# --------------------------
-# Unknown type
-# --------------------------
+if sha256sum -c "${DIST}.sha256"; then
+  echo "Checksum OK"
 else
-    echo "Unsupported distribution type: $BASENAME"
+  echo "Checksum FAILED"
+  exit 1
+fi
+echo "Detected JAR distribution: $BASENAME"
+if ! command -v jarsigner >/dev/null 2>&1; then
+    echo "jarsigner not found in PATH"
+    exit 1
+fi
+echo "Validating $DIST with external jarsigner..."
+jarsigner -verify "$DIST"
+if [ $? -eq 0 ]; then
+    echo "$DIST validation successful!"
+else
+    echo "$DIST validation failed!"
     exit 1
 fi
 

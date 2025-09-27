@@ -131,7 +131,9 @@ rm -rf "$VER_DIR"
 mkdir -p "$VER_DIR"
 
 cp "$REPO_DIR/target/ou-$OU_VERSION.jar" "$VER_DIR"
+cp "$REPO_DIR/target/ou-$OU_VERSION.jar.sha256" "$VER_DIR"
 cp "$REPO_DIR/target/ou" "$VER_DIR"
+cp "$REPO_DIR/target/ou.sha256" "$VER_DIR"
 
 echo "Build completed. Artifacts should be in $VER_DIR"
 
