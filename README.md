@@ -101,15 +101,13 @@ intelligently.
 
 ### 1. Start the Universe:
 
-<br><br>
-
 Linux 64-bit Intel/AMD (x64):
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ou-org/OpenUniverse/v1.0.22/src/main/scripts/hello.sh | sh -s -- 1.0.22 x64
 ```
 
-<br><br>
+<br>
 
 Linux 64-bit ARM (aarch64):
 
@@ -117,14 +115,11 @@ Linux 64-bit ARM (aarch64):
 curl -fsSL https://raw.githubusercontent.com/ou-org/OpenUniverse/v1.0.22/src/main/scripts/hello.sh | sh -s -- 1.0.22 aarch64
 ```
 
-> [!NOTE]
-> This will take a few minutes.
-
 ### 2. Hear the Universe!
 
 Open your browser and go to:
 
-[http://localhost:8080/events](http://localhost:8080/events)
+http://localhost:8080/events
 
 > [!NOTE]
 > Read more about **Hello, Universe!** example
