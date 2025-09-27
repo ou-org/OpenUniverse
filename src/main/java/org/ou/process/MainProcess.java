@@ -222,6 +222,7 @@ public class MainProcess {
             boolean stdinSec, //
             boolean gui, //
             boolean assumeYes, //
+            boolean noVerify, //
             boolean noColor, //
             boolean outputToConsole //
     ) throws Exception {
@@ -777,24 +778,33 @@ public class MainProcess {
             System.err.println(SEPARATOR_80_WITH_COLOR_SUPPORT);
             System.err.println();
 
-            Path jarPath = JarUtils.getSelfJar();
-            if (jarPath != null) {
-                String jreDir = jarPath.getParent().resolve("jre").toString();
-                boolean jreDirExists = (Files.isDirectory(Path.of(jreDir)));
+            if (!noVerify) {
+                Path jarPath = JarUtils.getSelfJar();
+                if (jarPath != null) {
+                    String jreDir = jarPath.getParent().resolve("jre").toString();
+                    boolean jreDirExists = (Files.isDirectory(Path.of(jreDir)));
 
-                String jarSHA256Report = JarUtils.createJarSHA256Report(jarPath);
-                Files.writeString(jarSHA256reportPath, jarSHA256Report, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.SYNC);
+                    String jarSHA256Report = JarUtils.createJarSHA256Report(jarPath);
+                    String sha256 = JarUtils.extractJarSha256FromSha256File(jarPath);
+                    if (jarSHA256Report.equals(sha256)) {
+                        System.err.println("INFO: The OpenUniverse JAR file SHA-256 is verified.");
+                    } else {
+                        CommonUtils.exitWithMsg(IMsg.JAR_SHA_256_VERIFICATION_FAILED);
+                        return;
+                    }
+                    Files.writeString(jarSHA256reportPath, jarSHA256Report, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.SYNC);
 
-                String jarsignerExecutable = jreDirExists ? jreDir + "/bin/jarsigner" : "jarsigner";
-                System.err.println("jarsigner: %s".formatted(jarsignerExecutable));
-                String jarSignerReport = JarUtils.createJarSignerReport(jarPath, jarsignerExecutable);
-                Files.writeString(jarSignerReportPath, jarSignerReport, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.SYNC);
+                    String jarsignerExecutable = jreDirExists ? jreDir + "/bin/jarsigner" : "jarsigner";
+                    System.err.println("jarsigner: %s".formatted(jarsignerExecutable));
+                    String jarSignerReport = JarUtils.createJarSignerReport(jarPath, jarsignerExecutable);
+                    Files.writeString(jarSignerReportPath, jarSignerReport, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.SYNC);
 
-                if (jarSignerReport.contains("jar verified.")) {
-                    System.err.println("INFO: The OpenUniverse JAR file signature is verified.");
-                } else {
-                    CommonUtils.exitWithMsg(IMsg.JAR_SIGNATURE_VERIFICATION_FAILED, repoPath);
-                    return;
+                    if (jarSignerReport.contains("jar verified.")) {
+                        System.err.println("INFO: The OpenUniverse JAR file signature is verified.");
+                    } else {
+                        CommonUtils.exitWithMsg(IMsg.JAR_SIGNATURE_VERIFICATION_FAILED);
+                        return;
+                    }
                 }
             }
 

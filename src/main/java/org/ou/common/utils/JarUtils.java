@@ -83,4 +83,10 @@ public class JarUtils {
             return null; // fallback if something went wrong
         }
     }
+
+    public static String extractJarSha256FromSha256File(Path jarPath) throws IOException {
+        Path sha256file = Path.of(jarPath.toString() + ".sha256");
+        String sha256 = Files.readString(sha256file).strip();
+        return sha256.substring(0, sha256.indexOf(" ")).toLowerCase(Locale.ENGLISH);
+    }
 }

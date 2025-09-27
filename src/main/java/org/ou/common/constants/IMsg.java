@@ -48,4 +48,5 @@ public interface IMsg {
     String INFO_PROCESS_STOPPED = "INFO: Process stopped.";
     String COMMIT_SIGNATURE_VERIFICATION_FAILED = "ERROR: Commit signature verification failed.";
     String JAR_SIGNATURE_VERIFICATION_FAILED = "ERROR: JAR signature verification failed.";
+    String JAR_SHA_256_VERIFICATION_FAILED = "ERROR: JAR SHA256 verification failed.";
 }

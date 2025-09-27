@@ -174,6 +174,7 @@ public class Main {
         }
         boolean outputToConsole = false;
         String noColorEnvVar = System.getenv("NO_COLOR");
+        boolean noVerify = false;
         boolean noColor = noColorEnvVar != null;
         boolean stdinSec = false;
         boolean gui = false;
@@ -184,7 +185,9 @@ public class Main {
                 switch (args[i]) {
                     case "--stdout", "-o" ->
                         outputToConsole = true;
-                    case "--no-color", "-n" ->
+                    case "--no-verify", "-nv" ->
+                        noVerify = true;
+                    case "--no-color", "-nc" ->
                         noColor = true;
                     case "--prompt-sec", "-p" ->
                         stdinSec = true;
@@ -214,6 +217,7 @@ public class Main {
                 stdinSec, //
                 gui, //
                 assumeYes, //
+                noVerify, //
                 noColor, //
                 outputToConsole //
         );
@@ -255,7 +259,8 @@ public class Main {
         sb.append(" --prompt-sec, -p  Prompt for the secret (see: --secret).                       \n");
         sb.append(" --gui-sec,    -g  Use GUI dialog to prompt for the secret (see: --prompt-sec). \n");
         sb.append(" --stdout,     -o  Print all records (as newline-delimited JSON) to console.    \n");
-        sb.append(" --no-color,   -n  Disable ANSI colors (same effect as NO_COLOR env var).       \n");
+        sb.append(" --no-verify,  -nv Disable ANSI colors (same effect as NO_COLOR env var).       \n");
+        sb.append(" --no-color,   -nc Disable ANSI colors (same effect as NO_COLOR env var).       \n");
         sb.append("                                                                                \n");
         sb.append("Optional environment variables:                                                 \n");
         sb.append("                                                                                \n");
