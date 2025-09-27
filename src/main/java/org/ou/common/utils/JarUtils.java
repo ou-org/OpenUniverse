@@ -51,7 +51,7 @@ public class JarUtils {
     public static String createJarSHA256Report(Path jarPath) throws IOException, NoSuchAlgorithmException {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         try (InputStream is = new BufferedInputStream(Files.newInputStream(jarPath))) {
-            byte[] buffer = new byte[8192];
+            byte[] buffer = new byte[1024000];
             int read;
             while ((read = is.read(buffer)) != -1) {
                 digest.update(buffer, 0, read);

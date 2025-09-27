@@ -34,7 +34,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.security.MessageDigest;
-import java.security.PrivateKey;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneOffset;
@@ -243,11 +242,6 @@ public class MainProcess {
                 }
             }
         }
-
-        String appDir = System.getenv("APPDIR"); // Run within AppImage
-        boolean appImage = appDir != null;
-        String jreDir = (appImage ? appDir : ISystemProperties.USER_DIR) + "/jre";
-        boolean jreDirExists = (Files.isDirectory(Path.of(jreDir)));
 
         MainProcess.noColor = noColor;
 
@@ -576,7 +570,6 @@ public class MainProcess {
         }
         nodeInfoMap.put("hostname", UnixUtils.getHostname());
         nodeInfoMap.put("ou_exec_wrapper_type_standalone", standalone);
-        nodeInfoMap.put("ou_exec_wrapper_type_app_image", appImage);
         nodeInfoMap.put("ou_exec_wrapper_type_java", true);
         nodeInfoMap.put("java_version", ISystemProperties.JAVA_VERSION);
         nodeInfoMap.put("java_vendor", ISystemProperties.JAVA_VENDOR);
@@ -786,6 +779,9 @@ public class MainProcess {
 
             Path jarPath = JarUtils.getSelfJar();
             if (jarPath != null) {
+                String jreDir = jarPath.getParent().resolve("jre").toString();
+                boolean jreDirExists = (Files.isDirectory(Path.of(jreDir)));
+
                 String jarSHA256Report = JarUtils.createJarSHA256Report(jarPath);
                 Files.writeString(jarSHA256reportPath, jarSHA256Report, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.SYNC);
 
