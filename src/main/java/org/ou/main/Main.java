@@ -259,7 +259,7 @@ public class Main {
         sb.append(" --prompt-sec, -p  Prompt for the secret (see: --secret).                       \n");
         sb.append(" --gui-sec,    -g  Use GUI dialog to prompt for the secret (see: --prompt-sec). \n");
         sb.append(" --stdout,     -o  Print all records (as newline-delimited JSON) to console.    \n");
-        sb.append(" --no-verify,  -nv Disable ANSI colors (same effect as NO_COLOR env var).       \n");
+        sb.append(" --no-verify,  -nv Disable pre-run platform self-verification phase.            \n");
         sb.append(" --no-color,   -nc Disable ANSI colors (same effect as NO_COLOR env var).       \n");
         sb.append("                                                                                \n");
         sb.append("Optional environment variables:                                                 \n");

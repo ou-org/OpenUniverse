@@ -22,13 +22,11 @@
  */
 package org.ou.process;
 
-import java.net.InetAddress;
+import java.util.List;
 
 import org.apache.commons.net.ntp.NTPUDPClient;
 
 public class NtpSettings {
-    public String ntpServer;
-    public Integer ntpPort;
+    public List<String> ntpServers;
     public NTPUDPClient ntpClient;
-    public InetAddress ntpHostAddr;
 }

@@ -101,9 +101,20 @@ intelligently.
 
 #### 1. Start the Universe:
 
+Linux 64-bit Intel/AMD (x64):
+
 ```bash
-curl -fsSL https://raw.githubusercontent.com/ou-org/OpenUniverse/v1.0.22/src/main/scripts/hello.sh | sh -s -- 1.0.22 x86_64
+curl -fsSL https://raw.githubusercontent.com/ou-org/OpenUniverse/v1.0.22/src/main/scripts/hello.sh | sh -s -- 1.0.22 x64
 ```
+
+<br>
+
+Linux 64-bit ARM (aarch64):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/ou-org/OpenUniverse/v1.0.22/src/main/scripts/hello.sh | sh -s -- 1.0.22 aarch64
+```
+
 > [!NOTE]
 > This will take a few Earth minutes.
 

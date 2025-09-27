@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.ProcessHandle.Info;
-import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -961,14 +960,12 @@ public class MainProcess {
                     timestampSettings.messageDigest = MessageDigest.getInstance(timestampSettings.algName);
                 }
 
-                ntpSettings = new NtpSettings();
                 Map<String, Object> ntpSettingsMap = rootTo.ntpSettingsMap;
                 if (ntpSettingsMap != null) {
+                    ntpSettings = new NtpSettings();
                     ntpSettingsMap = (Map<String, Object>) TemplateUtils.transform(ntpSettingsMap, defaultPropertiesMap, decryptor, secret);
-                    ntpSettings.ntpServer = (String) ntpSettingsMap.get("ntp_server");
-                    ntpSettings.ntpPort = (Integer) ntpSettingsMap.get("ntp_port");
+                    ntpSettings.ntpServers = (List) ntpSettingsMap.get("ntp_servers");
                     ntpSettings.ntpClient = new NTPUDPClient();
-                    ntpSettings.ntpHostAddr = InetAddress.getByName(ntpSettings.ntpServer);
                 }
 
                 String hashAlgorithm = rootTo.hashAlgorithm;

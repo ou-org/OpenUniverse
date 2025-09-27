@@ -25,6 +25,7 @@ package org.ou.process;
 import java.io.OutputStream;
 import java.lang.ProcessHandle.Info;
 import java.math.BigInteger;
+import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -198,19 +199,29 @@ public class LoggerUtils extends Thread {
                         treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_TIMESTAMP_KEY, timestampDataMap.get("timestamp"));
                         treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_ERROR_KEY, null);
                         break;
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
                         treeMap.put(IRecordConst.OUT_RECORD_RECORD_TIMESTAMP_ERROR_KEY, e.getMessage());
-                        e.printStackTrace();                        
+                        e.printStackTrace();
                     }
                 }
             }
         }
 
-        if (MainProcess.ntpSettings.ntpServer != null) {
-            treeMap.put(IRecordConst.OUT_RECORD_RECORD_NTP_SERVER_HOST_KEY, MainProcess.ntpSettings.ntpServer);
-            treeMap.put(IRecordConst.OUT_RECORD_RECORD_NTP_SERVER_PORT_KEY, MainProcess.ntpSettings.ntpPort);
-            String utcIsoTime = NtpUtils.getUtcIsoTime(MainProcess.ntpSettings.ntpClient, MainProcess.ntpSettings.ntpHostAddr, MainProcess.ntpSettings.ntpPort);
-            treeMap.put(IRecordConst.OUT_RECORD_RECORD_NTP_TIMESTAMP_KEY, utcIsoTime);
+        if (MainProcess.ntpSettings != null && !MainProcess.timestampSettings.tsaUrls.isEmpty()) {
+            for (String ntpHostPort : MainProcess.ntpSettings.ntpServers) {
+                if (treeMap.get(IRecordConst.OUT_RECORD_RECORD_NTP_SERVER_KEY) == null) {
+                    try {
+                        InetSocketAddress inetSocketAddress = NtpUtils.parseHostPort(ntpHostPort);
+                        String utcIsoTime = NtpUtils.getUtcIsoTime(MainProcess.ntpSettings.ntpClient, inetSocketAddress);
+                        treeMap.put(IRecordConst.OUT_RECORD_RECORD_NTP_SERVER_KEY, ntpHostPort);
+                        treeMap.put(IRecordConst.OUT_RECORD_RECORD_NTP_TIMESTAMP_KEY, utcIsoTime);
+                        break;
+                    } catch (Throwable e) {
+                        treeMap.put(IRecordConst.OUT_RECORD_RECORD_NTP_ERROR_KEY, e.getMessage());
+                        e.printStackTrace();
+                    }
+                }
+            }
         }
 
         if (outputToConsole) {

@@ -123,6 +123,6 @@ mkdir -p "$JDK_DIR"
 tar -xzf "$JDK_TAR" -C "$JDK_DIR" --strip-components=1
 
 # Start OpenUniverse to process example repo
-exec "$RELEASE_DIR/ou" "$REPO_DIR" start --stdout < /dev/tty
+exec "$RELEASE_DIR/ou" "$REPO_DIR" start --no-verify --stdout < /dev/tty
 
 #EOF

@@ -30,7 +30,8 @@ Flags:
  --gui-sec,    -g  Use GUI dialog to prompt for the secret (see: --prompt-sec).
 
  --stdout,     -o  Print all records (as newline-delimited JSON) to console.
- --no-color,   -n  Disable ANSI colors (same effect as NO_COLOR env var).
+ --no-verify,  -nv Disable pre-run platform self-verification phase.
+ --no-color,   -nc Disable ANSI colors (same effect as NO_COLOR env var).
 
 Optional environment variables:
 
