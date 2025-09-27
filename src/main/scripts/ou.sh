@@ -23,9 +23,11 @@
 
 # OpenUnvierse — The UaC (Universe as Code) platform
 
+SCRIPT_DIR=$(cd "$(dirname "$0")" >/dev/null 2>&1 && pwd)
+
 JAVA_EXEC=""  # Locate Java
 if [ -x "./jre/bin/java" ]; then
-  JAVA_EXEC="./jre/bin/java"
+  JAVA_EXEC="$SCRIPT_DIR/jre/bin/java"
 elif [ -n "$OU_JAVA_HOME" ]; then
   JAVA_EXEC="$OU_JAVA_HOME/bin/java"
 elif [ -n "$JAVA_HOME" ]; then
