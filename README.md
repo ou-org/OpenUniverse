@@ -24,6 +24,7 @@ about system evolution. In this sense, a Universe is a living ecosystem where ra
 and information evolves into knowledge, shaping how people, machines, and structures interact securely and
 intelligently.
 </p>
+
 <h2>Universe as Code</h2>
 <p>
   <b>UaC (Universe as Code)</b> is the forward-thinking extension of the well-known IaC (Infrastructure as
@@ -40,29 +41,48 @@ intelligently.
   where interoperability, compliance, intelligence, and evolution of systems are orchestrated holistically,
   making UaC a natural evolution beyond IaC.
 </p>
+
 <h2>Why <span class="product-name">Open<wbr>Universe</span>?</h2>
 <p>
-  <b>Open<wbr>Universe</b> is an ultralight, security-first open source
-  UaC (Universe as Code) platform that unifies your environment.
-  <br><br>
-  Empower your infrastructure with a code-first approach to event-driven cross-system workflows.
-  Define triggers and responses as code, connect with diverse technologies, and support language-agnostic
-  event sources and actions. Built for real-time coordination across modern distributed architecture.
-  <br><br>
-  Define triggers, workflows, and conditions declaratively. Write, version, and audit your entire
-  orchestration
-  logic using standard development tools. From simple alerts to complex multi-step responses, everything is
-  stored and deployed as code — enabling consistent, automated, and reviewable operations.
+  <span class="product-name">Open<wbr>Universe</span> is an ultralight, security-first open source UaC (Universe as Code) platform that unifies your environment.
 </p>
+<p>
+  Traditional Infrastructure as Code tools such as Terraform are effective for provisioning and
+  configuration but are not designed for real-time, event-driven orchestration across diverse systems. 
+  OpenUniverse fills this gap by enabling triggers, workflows, and responses to be
+  defined as code and executed dynamically across cloud services, on-premise systems, IoT devices, and legacy applications.
+</p>
+<p>
+  The platform ensures that orchestration logic is versioned, signed, and timestamped for compliance and traceability,
+  while maintaining security through cryptographic chaining of records. Because it is system-neutral, it integrates
+  across heterogeneous technologies without vendor lock-in.
+</p>
+<p>
+  By combining real-time coordination with auditability and long-term verifiability,
+  OpenUniverse extends the benefits of IaC into the operational domain,
+  offering a structured and predictable approach to automation that aligns with regulatory and governance needs.
+</p>
+
 <h2>How it works</h2>
 <p>
   OpenUniverse operates in several stages to transform static document definitions into a dynamic,
   event-driven infrastructure.
   <br><br>
-  First, the repository working directory is scanned for documents. Each document is represented as a JSON
+  Before any processing begins, OpenUniverse optionally performs a self-check to verify its own integrity:
+  <ul>
+    <li>The distribution JAR is validated against its expected SHA-256 checksum.</li>
+    <li>The JAR’s digital signature is verified to ensure it originates from a trusted source and has not been tampered with.</li>
+    <li>A detailed self-check report is generated and stored in the repository, providing a permanent audit trail of verification results.</li>
+  </ul>
+  <br>
+  Next, the repository working directory is scanned for documents. Each document is represented as a JSON
   object. A single JSON file may contain a single document or an array of documents. During this scan,
   OpenUniverse automatically skips any documents with unsupported specification versions or those explicitly
   marked as disabled.
+  <br><br>
+  In addition to JSON, documents and plugins may also be authored directly in Markdown files.  
+  This allows developers to provide human-readable documentation alongside executable definitions, blending
+  source, commentary, and infrastructure logic in a single artifact.
   <br><br>
   If the repository is marked to enforce signed commits (via repository configuration), OpenUniverse performs
   commit signature verification before any constraint checks:
@@ -95,7 +115,14 @@ intelligently.
   <li><b>DMQ</b> intercepts undeliverable or failed messages, routing them into a dedicated dead-message queue
       for later inspection, retries, or manual handling</li>
 </ul>
-</p>
+  <br>
+<p>Every record produced by OpenUniverse is secured and traceable through multiple layers of protection:</p>
+<ul>
+  <li><b>Identity & Ordering</b> – each record carries a globally unique identifier (GUID) and a serial number within its node’s stream, ensuring uniqueness and ordered traceability.</li>
+  <li><b>Integrity & Authenticity</b> – contents are hashed with SHA-256 and digitally signed to prevent tampering and prove origin.</li>
+  <li><b>Time Assurance</b> – records receive real-time NTP timestamps, are additionally sealed by a trusted Certificate Authority (CA) for long-term non-repudiation, and timestamped by a Time Stamping Authority (TSA, RFC 3161) for independent verification.</li>
+  <li><b>Immutability</b> – every record references the hash of its predecessor, forming a blockchain-style ledger that makes alterations immediately evident.</li>
+</ul></p>
 
 ## The "Hello, Universe!" Example
 

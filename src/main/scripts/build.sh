@@ -25,13 +25,6 @@
 # OpenUniverse Build Script
 #
 
-
-# Supported Architectures:
-#
-# x86_64       - 64-bit Intel/AMD
-# aarch64      - 64-bit ARM
-
-#!/bin/sh
 set -eu
 
 usage() {
@@ -104,23 +97,15 @@ WORKDIR="$(mktemp -d)"
 #trap 'rm -rf "$WORKDIR"' EXIT INT TERM
 echo "Working in temp dir: $WORKDIR"
 cd "$WORKDIR"
+REPO_DIR="$WORKDIR/repo"
+TARGET_DIR="$REPO_DIR/target"
 
 # -----------------------------
 # CLONE REPO
 # -----------------------------
 TAG="v${OU_VERSION}"
-git clone --depth=1 --branch "$TAG" "$REPO_URL" repo
-#git clone --depth=1 --branch <tagname> <repo-url> temp-repo
-cd repo
-
-
-
-#COMMIT_HASH=$(git rev-parse "$TAG")
-
-#echo "Checking out commit $COMMIT_HASH"
-#git checkout "$COMMIT_HASH"
-
-REPO_DIR="$(pwd)"
+git clone --depth=1 --branch "$TAG" "$REPO_URL" "$REPO_DIR"
+cd "$REPO_DIR"
 
 # -----------------------------
 # BUILD PROJECT
@@ -133,10 +118,14 @@ VER_DIR="${OUT_DIR}/ou-${OU_VERSION}"
 rm -rf "$VER_DIR"
 mkdir -p "$VER_DIR"
 
-cp "$REPO_DIR/target/ou-$OU_VERSION.jar" "$VER_DIR"
-cp "$REPO_DIR/target/ou-$OU_VERSION.jar.sha256" "$VER_DIR"
-cp "$REPO_DIR/target/ou" "$VER_DIR"
-cp "$REPO_DIR/target/ou.sha256" "$VER_DIR"
+cp "$TARGET_DIR/ou-${OU_VERSION}.jar" "$VER_DIR"
+cp "$TARGET_DIR/ou-${OU_VERSION}.jar.sha256" "$VER_DIR"
+
+cp "$TARGET_DIR/ou-${OU_VERSION}-src.jar" "$VER_DIR"
+cp "$TARGET_DIR/ou-${OU_VERSION}-src.jar.sha256" "$VER_DIR"
+
+cp "$TARGET_DIR/ou" "$VER_DIR"
+cp "$TARGET_DIR/ou.sha256" "$VER_DIR"
 
 echo "Build completed. Artifacts should be in $VER_DIR"
 
