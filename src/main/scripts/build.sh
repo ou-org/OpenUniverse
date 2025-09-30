@@ -101,21 +101,24 @@ fi
 # TEMP WORK DIR
 # -----------------------------
 WORKDIR="$(mktemp -d)"
-trap 'rm -rf "$WORKDIR"' EXIT INT TERM
+#trap 'rm -rf "$WORKDIR"' EXIT INT TERM
 echo "Working in temp dir: $WORKDIR"
 cd "$WORKDIR"
 
 # -----------------------------
 # CLONE REPO
 # -----------------------------
-git clone "$REPO_URL" repo
+TAG="v${OU_VERSION}"
+git clone --depth=1 --branch "$TAG" "$REPO_URL" repo
+#git clone --depth=1 --branch <tagname> <repo-url> temp-repo
 cd repo
 
-TAG="v${OU_VERSION}"
-COMMIT_HASH=$(git rev-parse "$TAG")
 
-echo "Checking out commit $COMMIT_HASH"
-git checkout "$COMMIT_HASH"
+
+#COMMIT_HASH=$(git rev-parse "$TAG")
+
+#echo "Checking out commit $COMMIT_HASH"
+#git checkout "$COMMIT_HASH"
 
 REPO_DIR="$(pwd)"
 
